@@ -31,3 +31,8 @@ struct EmptyStateView: View {
         .padding(16)
     }
 }
+
+#Preview {
+    EmptyStateView(viewState: .addItemToShoppingList)
+   //EmptyStateView(viewState: .createShoppingList)
+}
