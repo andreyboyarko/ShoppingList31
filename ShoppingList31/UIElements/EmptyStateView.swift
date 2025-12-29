@@ -17,14 +17,14 @@ struct EmptyStateView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            Image(viewState.imageName)
+            Image(viewState.imageResource)
                 .resizable()
                 .scaledToFit()
                 .padding(.bottom)
             
             Text(EmptyStateType.title)
-                .font(.mediumTitle.bold())
-            
+                .font(.mediumTitle)
+        
             Text(viewState.subtitle)
                 .font(.body)
         }
@@ -32,7 +32,10 @@ struct EmptyStateView: View {
     }
 }
 
-#Preview {
+#Preview("addItemToShoppingList") {
     EmptyStateView(viewState: .addItemToShoppingList)
-   //EmptyStateView(viewState: .createShoppingList)
+}
+
+#Preview("createShoppingList") {
+   EmptyStateView(viewState: .createShoppingList)
 }
