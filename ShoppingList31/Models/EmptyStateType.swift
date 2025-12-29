@@ -5,6 +5,8 @@
 //  Created by Владимир on 28.12.2025.
 //
 
+import DeveloperToolsSupport
+
 /// Перечисление состояний пустого экрана в приложении.
 /// Используется для отображения соответствующих сообщений и изображений
 /// когда в интерфейсе нет данных для показа.
@@ -28,12 +30,12 @@ enum EmptyStateType {
         }
     }
     
-    var imageName: String {
+    var imageResource: ImageResource {
         switch self {
         case .createShoppingList:
-            "work"
+                .work
         case .addItemToShoppingList:
-            "shopping"
+                .shopping
         }
     }
 }
