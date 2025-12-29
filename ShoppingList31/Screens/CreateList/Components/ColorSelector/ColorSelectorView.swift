@@ -9,9 +9,8 @@ import SwiftUI
 
 struct ColorSelectorView: View {
     
-    private let colors: [Color] = [.iconGreen, .iconPurple, .iconBlue, .iconRed, .iconYellow]
-    @State private var selectedIndex: Int?
-    let onSelected: ((Color) -> Void)?
+    @State private var selectedColor: IconColor?
+    let onSelected: ((IconColor) -> Void)?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -35,14 +34,14 @@ struct ColorSelectorView: View {
     
     private var colorStack: some View {
         HStack(spacing: 16) {
-            ForEach(colors.indices, id: \.self) { index in
+            ForEach(IconColor.allCases) { color in
                 ColorSelectorCellView(
-                    color: colors[index],
-                    isSelected: selectedIndex == index
+                    color: color.color,
+                    isSelected: selectedColor == color
                 )
                 .onTapGesture {
-                    selectedIndex = index
-                    onSelected?(colors[index])
+                    selectedColor = color
+                    onSelected?(color)
                 }
             }
         }
@@ -51,7 +50,7 @@ struct ColorSelectorView: View {
 
 #Preview {
     ColorSelectorView {
-        print("Selected color: \($0)")
+        print("Selected color: \($0.id)")
     }
     .padding()
     .background(Color(.yellow))

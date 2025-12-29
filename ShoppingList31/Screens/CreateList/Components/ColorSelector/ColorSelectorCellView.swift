@@ -30,7 +30,7 @@ struct ColorSelectorCellView: View {
         Circle()
             .fill(.clear)
             .stroke(.turquoise, lineWidth: 2)
-            .frame(width: size + 5, height: size + 5)
+            .frame(width: size + 9, height: size + 9)
             .opacity(isSelected ? 1 : 0)
     }
     
