@@ -7,14 +7,6 @@
 
 import DeveloperToolsSupport
 
-/// Перечисление состояний пустого экрана в приложении.
-/// Используется для отображения соответствующих сообщений и изображений
-/// когда в интерфейсе нет данных для показа.
-///
-/// При создании EmptyStateView выбирай:
-/// createShoppingList если нужна заглушка для экран - "Главный экран - не создан список"
-/// addItemToShoppingList если нужна заглушка для экрана - "Перечень товаров"
-
 enum EmptyStateType {
     case createShoppingList
     case addItemToShoppingList

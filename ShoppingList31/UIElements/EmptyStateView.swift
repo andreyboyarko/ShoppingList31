@@ -8,13 +8,9 @@
 import SwiftUI
 
 struct EmptyStateView: View {
-    
-    // MARK: - Property
-    
+        
     let viewState: EmptyStateType
-    
-    // MARK: - Body
-    
+        
     var body: some View {
         VStack(spacing: 10) {
             Image(viewState.imageResource)
