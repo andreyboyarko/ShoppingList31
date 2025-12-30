@@ -12,17 +12,18 @@ struct EmptyStateView: View {
     let viewState: EmptyStateType
         
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 28) {
             Image(viewState.imageResource)
                 .resizable()
                 .scaledToFit()
-                .padding(.bottom)
-            
-            Text(EmptyStateType.title)
-                .font(.mediumTitle)
-        
-            Text(viewState.subtitle)
-                .font(.body)
+                .frame(maxWidth: .infinity)
+              
+            VStack(spacing: 4) {
+                Text(EmptyStateType.title)
+                    .font(.smallTitle.bold())
+                Text(viewState.subtitle)
+                    .font(.body)
+            }
         }
         .padding(16)
     }
