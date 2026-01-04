@@ -15,7 +15,7 @@ struct ActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(Font.navigationBarButton)
+                .font(.headline)
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .foregroundStyle(textColor)
@@ -32,7 +32,7 @@ struct ActionButton: View {
     }
 
     private var textColor: Color {
-        isActive ? .white : .gray
+        isActive ? .textButton : .textHint
     }
 }
 
