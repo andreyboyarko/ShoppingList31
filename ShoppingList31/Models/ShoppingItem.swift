@@ -11,12 +11,12 @@ struct ShoppingItem: Identifiable {
     let id = UUID()
     let name: String
     let count: Int
-    let isSelected: Bool
+    let isPurchased: Bool
     
     init(name: String, count: Int, isSelected: Bool = false) {
         self.name = name
         self.count = count
-        self.isSelected = isSelected
+        self.isPurchased = isSelected
     }
 }
 
