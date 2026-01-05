@@ -20,7 +20,7 @@ struct EmptyStateView: View {
               
             VStack(spacing: 4) {
                 Text(EmptyStateType.title)
-                    .font(.smallTitle.bold())
+                    .font(.smallTitle)
                 Text(viewState.subtitle)
                     .font(.body)
             }
