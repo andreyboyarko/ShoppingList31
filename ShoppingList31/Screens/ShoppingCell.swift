@@ -23,7 +23,7 @@ struct ShoppingCell: View {
         .padding(.vertical, 4)
         separator
             .onAppear {
-                shoppingItemStatus = shoppingItem.isSelected
+                shoppingItemStatus = shoppingItem.isPurchased
             }
     }
     
@@ -37,34 +37,30 @@ struct ShoppingCell: View {
     private var nameOfItem: some View {
         Text(shoppingItem.name)
             .font(.body)
-            .foregroundStyle(shoppingItemStatus ? .selectedText : .unSelectedText)
+            .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
     }
     
     private var countItem: some View {
         Text("\(shoppingItem.count) шт.")
             .font(.body)
-            .foregroundStyle(shoppingItemStatus ? .selectedText : .unSelectedText)
+            .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
     }
     
     private var selectedIcon: some View {
-        VStack {
-            if shoppingItemStatus {
-                Image(.checkboxButton)
-            } else {
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(width: 22, height: 22)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.checkboxButtonBorder, lineWidth: 2)
-                    )
-            }
+            Image(systemName: shoppingItemStatus ? "checkmark.square.fill" : "square")
+                .resizable()
+                .frame(width: 22, height: 22)
+                .foregroundStyle(
+                    shoppingItemStatus
+                    ? .turquoise
+                    : .textGrayList
+                )
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    shoppingItemStatus.toggle()
+                }
         }
-        .frame(width: 44, height: 44)
-        .onTapGesture {
-            shoppingItemStatus.toggle()
-        }
-    }
 }
 
 #Preview {
