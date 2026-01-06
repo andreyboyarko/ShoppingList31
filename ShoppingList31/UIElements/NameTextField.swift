@@ -13,14 +13,14 @@ import SwiftUI
 /// - Parameter state: @State поле для управления состоянием
 struct NameTextField: View {
 
-    enum State: Equatable {
+    enum TextFieldState: Equatable {
         case normal
         case error(message: String)
     }
 
     let placeholder: String
     @Binding var text: String
-    var state: State = .normal
+    var state: TextFieldState = .normal
 
     @FocusState private var isFocused: Bool
 
@@ -29,9 +29,7 @@ struct NameTextField: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(.surfaceBackground)
-
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(borderColor, lineWidth: borderWidth)
+                    .stroke(borderColor, lineWidth: 0.5)
 
                 HStack(spacing: 8) {
                     TextField(placeholder, text: $text)
@@ -53,10 +51,6 @@ struct NameTextField: View {
                                 .padding(.trailing, 12)
                         }
                         .buttonStyle(.plain)
-                    } else {
-                        Spacer(minLength: 0)
-                            .frame(width: 0)
-                            .padding(.trailing, 16)
                     }
                 }
             }
@@ -65,7 +59,7 @@ struct NameTextField: View {
             if case .error(let message) = state {
                 Text(message)
                     .font(.footnote)
-                    .foregroundStyle(.swipeActionIRed)
+                    .foregroundStyle(.red)
                     .padding(.horizontal, 8)
             }
         }
@@ -73,19 +67,8 @@ struct NameTextField: View {
 
     private var borderColor: Color {
         switch state {
-        case .normal:
-            return .clear
-        case .error:
-            return .swipeActionIRed
-        }
-    }
-
-    private var borderWidth: CGFloat {
-        switch state {
-        case .normal:
-            return 0
-        case .error:
-            return 0.5
+        case .normal: .clear
+        case .error: .red
         }
     }
 }
