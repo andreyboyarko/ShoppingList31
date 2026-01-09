@@ -23,12 +23,17 @@ struct ListCell: View {
             .padding(.vertical, 18)
             
             Text(listItem.title)
-                .font(Font.smallTitle)
+                .font(.smallTitle)
                 .padding(.leading, 12)
             Spacer()
-            Text("\(listItem.completed)/\(listItem.total)")
-                .font(Font.body)
-                .padding(.trailing, 16)
+            
+            HStack(spacing: 0) {
+                Text("\(listItem.completed)/")
+                    .font(.body)
+                Text("\(listItem.total)")
+                    .font(.headline)
+            }
+            .padding(.trailing, 16)
         }
         .frame(height: 84)
         .background(.surfaceBackground)
