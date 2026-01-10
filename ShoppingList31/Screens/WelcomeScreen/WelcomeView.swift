@@ -52,6 +52,7 @@ struct WelcomeView: View {
         }
         .multilineTextAlignment(.center)
         .padding(.horizontal, 16)
+        .foregroundStyle(.textSecondary)
     }
 
     private var background: some View {
