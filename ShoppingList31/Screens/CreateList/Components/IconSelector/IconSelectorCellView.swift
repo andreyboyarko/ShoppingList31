@@ -9,6 +9,8 @@ import SwiftUI
 
 struct IconSelectorCellView: View {
     
+    private static let iconScaleFactor: CGFloat = 0.45
+    
     let color: Color
     let icon: Image
     let size: CGFloat
@@ -37,7 +39,7 @@ struct IconSelectorCellView: View {
     private var iconOutline: some View {
         icon
             .foregroundStyle(isSelected ? .iconForegroundSelected : .iconForegroundDefault)
-            .font(.system(size: size * 0.45))
+            .font(.system(size: size * Self.iconScaleFactor))
     }
 }
 
