@@ -22,7 +22,7 @@ struct WelcomeView: View {
                 Spacer()
 
                 ActionButton(
-                    title: "Начать",
+                    title: Phrases.start,
                     isActive: true,
                     action: onStart
                 )
@@ -34,6 +34,7 @@ struct WelcomeView: View {
     private var welcomeText: some View {
         Text(Phrases.welcome)
             .font(.largeTitle)
+            .foregroundStyle(.textPrimary)
     }
 
     private var image: some View {
@@ -64,6 +65,7 @@ struct WelcomeView: View {
         static let welcome = "Добро пожаловать!"
         static let message1 = "Никогда не забывайте, что нужно купить"
         static let message2 = "Создавайте списки и не переживайте о покупках"
+        static let start = "Начать"
     }
 }
 
