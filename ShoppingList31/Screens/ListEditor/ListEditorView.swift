@@ -59,14 +59,17 @@ struct ListEditorView: View {
     }
     
     var body: some View {
-        VStack(spacing: 24) {
-            textField
-            colorSelector
-            iconSelector
-            Spacer()
+        VStack {
+            ScrollView {
+                formStack
+                    .padding(.horizontal, 16)
+            }
+            .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollDismissesKeyboard(.interactively)
+            
             button
         }
-        .padding(.horizontal, 16)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -81,6 +84,14 @@ struct ListEditorView: View {
                     .font(.headline)
                 }
             }
+        }
+    }
+    
+    private var formStack: some View {
+        VStack(spacing: 24) {
+            textField
+            colorSelector
+            iconSelector
         }
     }
     
