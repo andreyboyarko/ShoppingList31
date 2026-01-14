@@ -44,7 +44,7 @@ struct MainScreen: View {
                             Button {
                                 // взаимодействие
                             } label: {
-                                Image(systemName: "square.on.square")
+                                Image(systemName: "plus.square.on.square")
                             }
                             .tint(.swipeActionIOrange)
                             
