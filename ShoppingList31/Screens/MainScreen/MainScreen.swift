@@ -33,14 +33,28 @@ struct MainScreen: View {
                         )
                         .background(.appBackground)
                         .swipeActions(edge: .trailing) {
-                              Button(role: .destructive) {  } label: {
-                                  Label("Delete", systemImage: "trash")
-                              }
-                              Button {  } label: {
-                                  Label("Flag", systemImage: "flag")
-                              }
-                              .tint(.orange)
-                          }
+                            
+                            Button(role: .destructive) {
+                                // удаление
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .tint(.swipeActionIRed)
+                            
+                            Button {
+                                // взаимодействие
+                            } label: {
+                                Image(systemName: "square.on.square")
+                            }
+                            .tint(.swipeActionIOrange)
+                            
+                            Button {
+                                // действие для редактирования
+                            } label: {
+                                Image(systemName: "square.and.pencil")
+                            }
+                            .tint(.swipeActionIGray)
+                        }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
