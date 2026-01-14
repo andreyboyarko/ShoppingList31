@@ -48,6 +48,48 @@ extension ListItem {
             total: 4
         ),
         ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: "IconBlue",
+            icon: "calendar-number",
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
             color: "IconYellow",
             icon: "game-controller",
             title: "Вечеринка малого",
