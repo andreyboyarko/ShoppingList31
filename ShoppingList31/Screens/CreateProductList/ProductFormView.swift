@@ -69,11 +69,10 @@ struct ProductFormView: View {
     
     private var submitButton: some View {
         Button("Готово") {
-            print("Готово")
             observed.saveToDatabase()
             isPresented = false
         }
-        .font(.body)
+        .font(.navigationBarButton)
         .foregroundStyle(observed.isFormValid ? .turquoise : .textHint)
         .disabled(!observed.isFormValid)
     }
