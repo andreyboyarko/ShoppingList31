@@ -82,7 +82,7 @@ struct ProductFormView: View {
     }
     
     private var quantityField: some View {
-        observed.isCreating ? NameTextField(placeholder: "Количество", text: $observed.productCount) : NameTextField(placeholder: "", text: $observed.productCount)
+        observed.isCreating ? NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) : NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
     }
     
     private var unitSelectionField: some View {
