@@ -95,7 +95,7 @@ struct ProductFormView: View {
             customPicker
         )
         .onTapGesture {
-            observed.swapMenuState()
+            observed.showMenu()
         }
     }
     
@@ -189,7 +189,7 @@ extension ProductFormView {
             isMenuShowing = false
         }
         
-        func swapMenuState() {
+        func showMenu() {
             isMenuShowing = true
         }
     }
