@@ -38,8 +38,6 @@ struct ListCell: View {
         .frame(height: 84)
         .background(.surfaceBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .padding(.horizontal, 16)
-        .padding(.bottom, 12)
     }
 }
 
