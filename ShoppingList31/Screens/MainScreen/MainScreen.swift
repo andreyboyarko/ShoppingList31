@@ -24,33 +24,40 @@ struct MainScreen: View {
                 Spacer()
             } else {
                 List {
-                    ForEach(0..<lists.count, id: \.self) { index in
-                        ListCell(listItem: lists[index])
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                            .background(.appBackground)
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    // удаление
-                                } label: {
-                                    Image(systemName: "trash")
+                    ForEach(lists.indices, id: \.self) { index in
+
+                        SwipeRow(
+                            height: 84,
+                            cornerRadius: 16,
+                            buttonWidth: 62,
+                            actions: [
+                                SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
+                                    // редактировать
+                                },
+                                SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
+                                    // копировать / что нужно
+                                },
+                                SwipeAction(systemImage: "trash", tint: .swipeActionIRed) {
+                                    // удалить
                                 }
-                                .tint(.swipeActionIRed)
-                                
-                                Button {
-                                    // взаимодействие
-                                } label: {
-                                    Image(systemName: "plus.square.on.square")
-                                }
-                                .tint(.swipeActionIOrange)
-                                
-                                Button {
-                                    // действие для редактирования
-                                } label: {
-                                    Image(systemName: "square.and.pencil")
-                                }
-                                .tint(.swipeActionIGray)
-                            }
+                            ]
+                        ) {
+                            ListCell(listItem: lists[index])
+                                .clipShape(RoundedCorners(radius: 16, corners: [.topLeft, .bottomLeft]))
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowBackground(Color.appBackground)
+
+                        if index < lists.count - 1 {
+                            Rectangle()
+                                .fill(.appBackground)
+                                .frame(height: 12)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                                .listRowBackground(Color.appBackground)
+                        }
+
                         if index < lists.count - 1 {
                             Rectangle()
                                 .fill(.appBackground)
