@@ -5,6 +5,7 @@
 //  Created by Волошин Александр on 1/15/26.
 //
 import SwiftUI
+import UIKit
 
 struct SwipeRow<Content: View>: View {
     let height: CGFloat
@@ -42,6 +43,7 @@ struct SwipeRow<Content: View>: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
+            // Кнопки в фоне
             HStack(spacing: 0) {
                 ForEach(Array(actions.enumerated()), id: \.element.id) { idx, action in
                     Button {
@@ -55,19 +57,34 @@ struct SwipeRow<Content: View>: View {
                             .background(actionBackground(for: idx, color: action.tint))
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                 }
             }
+            .frame(width: maxReveal)
             .frame(height: height)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .clipped()
             
+            // Контент сверху
             content
+                .frame(maxWidth: .infinity)
                 .frame(height: height)
                 .offset(x: offsetX)
                 .clipShape(contentShape)
                 .contentShape(Rectangle())
-                .simultaneousGesture(dragGesture)
+                .allowsHitTesting(!isOpen)
                 .animation(.interactiveSpring(response: 0.25, dampingFraction: 0.9), value: offsetX)
         }
+        .frame(maxWidth: .infinity)
+        .frame(height: height)
+        .background(Color.appBackground)
         .clipped()
+        .onTapGesture {
+            if isOpen {
+                close()
+            }
+        }
+        .simultaneousGesture(dragGesture)  // ← Ключевое изменение: simultaneousGesture
     }
     
     private func actionBackground(for idx: Int, color: Color) -> some View {
@@ -82,9 +99,10 @@ struct SwipeRow<Content: View>: View {
     }
     
     private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 8)
+        DragGesture(minimumDistance: 0)  // Убрали minimumDistance, чтобы лучше ловить начало движения
             .onChanged { value in
-                if abs(value.translation.height) > abs(value.translation.width) + 10 {
+                // Если вертикальное движение сильно доминирует — полностью игнорируем (скролл List возьмёт)
+                if abs(value.translation.height) > abs(value.translation.width) + 30 {
                     return
                 }
                 
@@ -98,8 +116,11 @@ struct SwipeRow<Content: View>: View {
                 offsetX = clamp(proposed, min: -maxReveal, max: 0)
             }
             .onEnded { value in
-                if abs(value.translation.height) > abs(value.translation.width) + 10 {
-                    close()
+                // Если движение было преимущественно вертикальным — закрываем (если открыто) и отдаём скроллу
+                if abs(value.translation.height) > abs(value.translation.width) + 30 {
+                    if isOpen {
+                        close()
+                    }
                     return
                 }
                 
