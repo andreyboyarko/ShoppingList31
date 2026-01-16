@@ -10,8 +10,7 @@ import SwiftUI
 struct IconSelectorView: View {
     
     let color: Color
-    @State private var selectedIcon: Icon?
-    let onSelected: ((Icon) -> Void)?
+    @Binding var selectedIcon: Icon?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -48,7 +47,6 @@ struct IconSelectorView: View {
                 )
                 .onTapGesture {
                     selectedIcon = icon
-                    onSelected?(icon)
                 }
             }
         }
@@ -56,9 +54,9 @@ struct IconSelectorView: View {
 }
 
 #Preview {
-    IconSelectorView(color: .green) {
-        print("Selected icon: \($0.id)")
-    }
+    @Previewable @State var icon: Icon?
+    
+    IconSelectorView(color: .green, selectedIcon: $icon)
     .padding()
     .background(.yellow)
 }

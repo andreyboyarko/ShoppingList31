@@ -40,7 +40,7 @@ struct NameTextField: View {
                         .padding(.trailing, text.isEmpty ? 16 : 0)
                         .frame(height: 54)
 
-                    if !text.isEmpty {
+                    if !text.isEmpty && isFocused {
                         Button {
                             text = ""
                             isFocused = true

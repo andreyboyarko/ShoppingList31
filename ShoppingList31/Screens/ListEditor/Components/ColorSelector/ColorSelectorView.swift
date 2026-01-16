@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ColorSelectorView: View {
     
-    @State private var selectedColor: IconColor?
-    let onSelected: ((IconColor) -> Void)?
+    @Binding var selectedColor: IconColor?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,7 +40,6 @@ struct ColorSelectorView: View {
                 )
                 .onTapGesture {
                     selectedColor = color
-                    onSelected?(color)
                 }
             }
         }
@@ -49,9 +47,9 @@ struct ColorSelectorView: View {
 }
 
 #Preview {
-    ColorSelectorView {
-        print("Selected color: \($0.id)")
-    }
-    .padding()
-    .background(Color(.yellow))
+    @Previewable @State var color: IconColor?
+    
+    ColorSelectorView(selectedColor: $color)
+        .padding()
+        .background(Color(.yellow))
 }

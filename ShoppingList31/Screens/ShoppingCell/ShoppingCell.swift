@@ -41,7 +41,7 @@ struct ShoppingCell: View {
     }
     
     private var countItem: some View {
-        Text("\(shoppingItem.count) шт.")
+        Text("\(shoppingItem.count) \(shoppingItem.unit).")
             .font(.body)
             .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
     }
