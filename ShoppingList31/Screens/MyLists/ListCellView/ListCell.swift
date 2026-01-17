@@ -15,8 +15,8 @@ struct ListCell: View {
             ZStack {
                 Circle()
                     .frame(width: 48, height: 48)
-                    .foregroundColor(Color(listItem.color))
-                Image(listItem.icon)
+                    .foregroundColor(listItem.color.color)
+                Image(listItem.icon.icon)
                     .foregroundColor(.black)
             }
             .padding(.leading, 16)
@@ -38,8 +38,6 @@ struct ListCell: View {
         .frame(height: 84)
         .background(.surfaceBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .padding(.horizontal, 16)
-        .padding(.bottom, 12)
     }
 }
 
