@@ -39,7 +39,7 @@ struct ShoppingCell: View {
     
     private var nameOfItem: some View {
         Text(shoppingItem.name)
-            .font(.appBody)
+            .font(.body)
             .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
     }
     

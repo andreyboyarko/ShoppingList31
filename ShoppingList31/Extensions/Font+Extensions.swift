@@ -20,7 +20,4 @@ extension Font {
     static let callout = Font.system(size: 16, weight: .regular)
     static let footnote = Font.system(size: 13, weight: .medium)
     static let navigationBarButton = Font.system(size: 17, weight: .semibold)
-    
-    static let appBody = Font.system(size: 17, weight: .regular)
-    static let appHeadline = Font.system(size: 17, weight: .medium)
 }

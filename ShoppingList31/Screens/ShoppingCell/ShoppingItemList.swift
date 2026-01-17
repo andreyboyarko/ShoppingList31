@@ -9,12 +9,17 @@ import SwiftUI
 
 struct ShoppingItemList: View {
     
+    let navigationTitle: String
     @State private var searchText = ""
     @State private var shoppingItems: [ShoppingItem]
+    
     @Environment(\.dismiss) private var dismiss
     
-    init(shoppingItems: [ShoppingItem] = ShoppingItem.mockArray) {
-         _shoppingItems = State(initialValue: shoppingItems)
+    init(
+        navigationTitle: String = "Новый год",
+        shoppingItems: [ShoppingItem] = ShoppingItem.mockArray) {
+        self.navigationTitle = navigationTitle
+        _shoppingItems = State(initialValue: shoppingItems)
      }
     
     var body: some View {
@@ -50,24 +55,24 @@ struct ShoppingItemList: View {
                 )
             }
             .background(Color.appBackground)
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    HStack(spacing: 8) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .bold))
+                        HStack {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundStyle(.textPrimary)
+                                    .frame(width: 28, height: 44)
+                            }
+                            Text(navigationTitle)
+                                .font(.headline)
                                 .foregroundStyle(.textPrimary)
+                            Spacer()
                         }
-                        
-                        Text(ShoppingItemListText.navigationTitle)
-                            .font(.appHeadline)
-                            .foregroundStyle(.textPrimary)
-                    }
-                }
                 
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button {
@@ -81,7 +86,6 @@ struct ShoppingItemList: View {
                         } label: {
                             Label(ShoppingItemListText.menuShare, systemImage: "square.and.arrow.up")
                         }
-                        
                         Button {
                             uncheckAll()
                         } label: {
@@ -95,9 +99,9 @@ struct ShoppingItemList: View {
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                            .font(.system(size: 19))
                             .foregroundStyle(.textPrimary)
+                            .frame(width: 44, height: 44)
                     }
                 }
             }
@@ -107,23 +111,23 @@ struct ShoppingItemList: View {
     private var searchBar: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(.appGreyHint)
+                .foregroundStyle(.textHint)
                 .font(.system(size: 17))
             
             ZStack(alignment: .leading) {
                 if searchText.isEmpty {
                     Text(ShoppingItemListText.searchPlaceholder)
-                        .font(.appBody)
-                        .foregroundStyle(.appGreyHint)
+                        .font(.body)
+                        .foregroundStyle(.textHint)
                 }
                 TextField("", text: $searchText)
-                    .font(.appBody)
+                    .font(.body)
                     .foregroundStyle(.textPrimary)
             }
         }
         .padding(.horizontal, 12)
         .frame(height: 36)
-        .background(Color.grayButton)
+        .background(Color.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding(.horizontal, 16)
         .padding(.vertical, 11)
@@ -180,7 +184,6 @@ struct ShoppingItemList: View {
 }
 
 enum ShoppingItemListText {
-    static let navigationTitle = "Новый год"
     static let searchPlaceholder = "Поиск"
     static let menuSortAlphabetically = "Сортировать по алфавиту"
     static let menuShare = "Поделиться"
