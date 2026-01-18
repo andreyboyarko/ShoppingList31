@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ListEditorView: View {
     
@@ -35,6 +36,7 @@ struct ListEditorView: View {
     @State private var selectedIcon: Icon?
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -125,11 +127,22 @@ struct ListEditorView: View {
     }
     
     private func createList() {
-        print("List created: \(name), \(selectedColor?.id ?? ""), \(selectedIcon?.id ?? "")")
+        guard let selectedColor, let selectedIcon else { return }
+        
+        let item = ListItem(
+            color: selectedColor,
+            icon: selectedIcon,
+            title: name,
+            completed: 0,
+            total: 0
+        )
+        context.insert(item)
+        dismiss()
     }
     
     private func saveList(_ item: ListItem) {
-        print("List edited: \(item.id), new name: \(name)")
+        item.title = name
+        dismiss()
     }
 }
 
@@ -141,8 +154,16 @@ struct ListEditorView: View {
 }
 
 #Preview("Редактировать список") {
+    let item = ListItem(
+        color: .blue,
+        icon: .calendarNumber,
+        title: "Новый год",
+        completed: 10,
+        total: 20
+    )
+    
     NavigationStack {
-        ListEditorView(mode: .edit(ListItem.mock))
+        ListEditorView(mode: .edit(item))
             .appBackground()
     }
 }

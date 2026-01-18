@@ -5,24 +5,29 @@
 //  Created by Волошин Александр on 1/13/26.
 //
 import SwiftUI
+import SwiftData
 
 struct MainScreen: View {
-    @State var lists: [ListItem]
+    @Environment(\.modelContext) private var context
+    @Query private var lists: [ListItem]
+    
     var body: some View {
-        VStack {
-            screenTitle
-            if lists.isEmpty {
-                EmptyStateView(viewState: .createShoppingList)
-                    .padding(.top, 88)
-                Spacer()
-            } else {
-                mainList
+        NavigationStack {
+            VStack {
+                screenTitle
+                if lists.isEmpty {
+                    EmptyStateView(viewState: .createShoppingList)
+                        .padding(.top, 88)
+                    Spacer()
+                } else {
+                    mainList
+                }
             }
-        }
-        .background(.appBackground)
-        .safeAreaInset(edge: .bottom) {
-            ActionButton(title: "Создать список", isActive: true) {
-                print("Pushed button")
+            .background(.appBackground)
+            .safeAreaInset(edge: .bottom) {
+                ActionButton(title: "Создать список", isActive: true) {
+                    
+                }
             }
         }
     }
@@ -39,27 +44,27 @@ struct MainScreen: View {
     
     private var mainList: some View {
         List {
-            ForEach(lists.indices, id: \.self) { index in
+            ForEach(lists) { list in
                 SwipeRow(
                     actions: [
                         SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
-                            // редактировать
+                            // навигация в редактировать
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
                             // копировать / что нужно
                         },
                         SwipeAction(systemImage: "trash", tint: .swipeActionIRed) {
-                            // удалить
+                            context.delete(list)
                         }
                     ]
                 ) {
-                    ListCell(listItem: lists[index])
+                    ListCell(listItem: list)
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .listRowBackground(Color.appBackground)
                 
-                if index < lists.count - 1 {
+                if (lists.firstIndex(of: list) ?? 0) + 1 < lists.count {
                     Rectangle()
                         .fill(.appBackground)
                         .frame(height: 12)
@@ -79,9 +84,5 @@ struct MainScreen: View {
 }
 
 #Preview {
-    MainScreen(lists: ListItem.mockArray)
-}
-
-#Preview {
-    MainScreen(lists: [])
+    MainScreen()
 }

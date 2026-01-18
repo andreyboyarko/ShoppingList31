@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ShoppingList31App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ListEditorView(mode: .create)
+            MainScreen()
         }
+        .modelContainer(for: ListItem.self)
     }
 }
