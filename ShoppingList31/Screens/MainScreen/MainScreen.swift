@@ -8,6 +8,7 @@ import SwiftUI
 
 struct MainScreen: View {
     @State var lists: [ListItem]
+    
     var body: some View {
         VStack {
             screenTitle
@@ -32,9 +33,12 @@ struct MainScreen: View {
             Text("Мои списки")
                 .font(.screenTitle)
             Spacer()
+            MainScreenMenu(sortAlphabetically: {
+                
+            })
         }
         .frame(height: 52)
-        .padding(.leading, 16)
+        .padding(.horizontal, 16)
     }
     
     private var mainList: some View {
@@ -79,9 +83,15 @@ struct MainScreen: View {
 }
 
 #Preview {
+    let store = ThemeStore()
+    
     MainScreen(lists: ListItem.mockArray)
+        .environment(store)
 }
 
 #Preview {
+    let store = ThemeStore()
+    
     MainScreen(lists: [])
+        .environment(store)
 }

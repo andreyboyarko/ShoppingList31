@@ -7,20 +7,14 @@
 
 import SwiftUI
 
-
-enum AppTheme: String, CaseIterable {
-    case light = "Светлая"
-    case dark = "Темная"
-    case system = "Системная"
-}
-
-struct ContextMenuButton: View {
-    let currentTheme: AppTheme
-    let setTheme: (AppTheme) -> Void
+struct MainScreenMenu: View {
+    @Environment(ThemeStore.self) var themeStore
     let sortAlphabetically: () -> Void
     
     var body: some View {
         Image(systemName: "ellipsis.circle")
+            .padding(12)
+            .contentShape(Rectangle())
             .contextMenu {
                 Menu {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
@@ -37,23 +31,24 @@ struct ContextMenuButton: View {
                     Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
                 }
             }
-
-        
     }
     
     private func themeButton(_ theme: AppTheme) -> some View {
         Button {
-            setTheme(theme)
+            themeStore.theme = theme
         } label: {
-            Label(theme.rawValue, systemImage: currentTheme == theme ? "checkmark" : "")
+            HStack {
+                if themeStore.theme == theme {
+                    Image(systemName: "checkmark")
+                }
+                Text(theme.rawValue)
+            }
         }
     }
 }
 
 #Preview {
-    ContextMenuButton(currentTheme: .dark, setTheme: { _ in
-        
-    }, sortAlphabetically: {
+    MainScreenMenu(sortAlphabetically: {
         
     })
 }
