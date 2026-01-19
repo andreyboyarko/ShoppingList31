@@ -31,8 +31,7 @@ struct MainScreen: View {
                 ToolbarItem(placement: .topBarLeading) {
                     HStack {
                         Text("Мои списки")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(.screenTitle)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)

@@ -21,7 +21,7 @@ struct ShoppingList31App: App {
     var body: some Scene {
         WindowGroup {
             MainScreen(lists: ListItem.mockArray)
-                .onChange(of: themeStore.theme, { oldValue, newValue in
+                .onChange(of: themeStore.theme, { _, newValue in
                     storedTheme = newValue
                 })
                 .preferredColorScheme(colorScheme(for: themeStore.theme))
