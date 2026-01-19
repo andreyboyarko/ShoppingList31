@@ -125,12 +125,11 @@ struct ShoppingItemList: View {
                     .foregroundStyle(.textPrimary)
             }
         }
-        .padding(.horizontal, 12)
+        .padding(8)
         .frame(height: 36)
         .background(Color.searchBarBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding(.horizontal, 16)
-        .padding(.vertical, 11)
         .frame(height: 58)
     }
     
