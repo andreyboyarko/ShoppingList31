@@ -17,10 +17,9 @@ enum AppTheme: String, CaseIterable {
 @MainActor
 @Observable
 final class ThemeStore {
+    var theme: AppTheme = .system
     
     init(theme: AppTheme = .system) {
         self.theme = theme
     }
-    
-    var theme: AppTheme = .system
 }
