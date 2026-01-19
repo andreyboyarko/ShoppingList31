@@ -48,7 +48,10 @@ struct MainScreenMenu: View {
 }
 
 #Preview {
+    let store = ThemeStore()
+    
     MainScreenMenu(sortAlphabetically: {
         
     })
+    .environment(store)
 }
