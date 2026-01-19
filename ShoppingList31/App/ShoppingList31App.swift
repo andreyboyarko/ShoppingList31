@@ -12,9 +12,8 @@ import SwiftData
 struct ShoppingList31App: App {
     var body: some Scene {
         WindowGroup {
-//            ListEditorView(mode: .create)
-            MainScreen()
+            ShoppingItemList(navigationTitle: "Новый год")
         }
-        .modelContainer(for: ListItem.self)
+        .modelContainer(for: [ListItem.self, ShoppingItem.self])
     }
 }

@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ProductFormView: View {
-    
     @Binding var isPresented: Bool
     let config: FormConfig
     @State private var observed: ProductFormObserved
+    
+    @Environment(\.modelContext) private var context
     
     init (
         isPresented: Binding<Bool>,
@@ -69,7 +71,26 @@ struct ProductFormView: View {
     
     private var submitButton: some View {
         Button("Готово") {
-            observed.saveToDatabase()
+            if observed.isCreating {
+                guard let count = Int(observed.productCount) else { return }
+                
+                let item = ShoppingItem(
+                    name: observed.productName,
+                    count: count,
+                    unit: observed.selectedUnit)
+                context.insert(item)
+            } else {
+                guard let count = Int(observed.productCount) else { return }
+                
+                config.product?.name = observed.productName
+                config.product?.count = count
+                config.product?.unit = observed.selectedUnit
+            }
+            
+            if observed.isCreating {
+                observed.cleanField()
+            }
+            
             isPresented = false
         }
         .font(.navigationBarButton)
@@ -78,11 +99,15 @@ struct ProductFormView: View {
     }
     
     private var productNameField: some View {
-        observed.isCreating ? NameTextField(placeholder: "Название товара", text: $observed.productName) : NameTextField(placeholder: "", text: $observed.productName)
+        observed.isCreating ?
+        NameTextField(placeholder: "Название товара", text: $observed.productName) :
+        NameTextField(placeholder: "", text: $observed.productName)
     }
     
     private var quantityField: some View {
-        observed.isCreating ? NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) : NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
+        observed.isCreating ?
+        NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) :
+        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
     }
     
     private var unitSelectionField: some View {
@@ -147,7 +172,6 @@ extension ProductFormView {
         }
         
         init(config: FormConfig) {
-            
             self.mode = config.mode
             
             if let product = config.product {
@@ -155,29 +179,6 @@ extension ProductFormView {
                 self.productCount = String(product.count)
                 self.selectedUnit = product.unit
                 self.unitPickerSelection = UnitsProduct(rawValue: product.unit) ?? UnitsProduct.pieces
-            }
-        }
-        
-        func saveToDatabase() {
-            guard isFormValid  else { return }
-            
-            // Сохранить в SwiftData
-            if isCreating {
-                print("[ProductFormObserved/saveToDatabase] Сохранение в БД:")
-                print("  Название: \(productName)")
-                print("  Количество: \(productCount)")
-                print("  Единица: \(selectedUnit)")
-                print("  Режим: \(mode)")
-            } else {
-                print("[ProductFormObserved/saveToDatabase] Изменения в БД:")
-                print("  Новое Название: \(productName)")
-                print("  Новое Количество: \(productCount)")
-                print("  Новая Единица: \(selectedUnit)")
-                print("  Режим: \(mode)")
-            }
-            
-            if isCreating {
-                cleanField()
             }
         }
         

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ShoppingCell: View {
-    
     let shoppingItem: ShoppingItem
     @State var shoppingItemStatus: Bool = false
     
@@ -67,11 +66,26 @@ struct ShoppingCell: View {
 }
 
 #Preview {
-    ShoppingCell(shoppingItem: ShoppingItem.mock)
+    let mock = ShoppingItem(
+        name: "Молоко",
+        count: 2,
+        unit: "л",
+        isSelected: true
+    )
+    
+    ShoppingCell(shoppingItem: mock)
 }
 
 #Preview {
-    ForEach(ShoppingItem.mockArray, id: \.id) { item in
+    let mockArray = [
+        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false),
+        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true),
+        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false),
+        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true),
+        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false)
+    ]
+    
+    ForEach(mockArray, id: \.id) { item in
         ShoppingCell(shoppingItem: item)
     }
 }

@@ -6,21 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShoppingItemList: View {
-    
     let navigationTitle: String
     @State private var searchText = ""
-    @State private var shoppingItems: [ShoppingItem]
+    @Query private var shoppingItems: [ShoppingItem]
     
+    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    
-    init(
-        navigationTitle: String = "Новый год",
-        shoppingItems: [ShoppingItem] = ShoppingItem.mockArray) {
-        self.navigationTitle = navigationTitle
-        _shoppingItems = State(initialValue: shoppingItems)
-     }
     
     var body: some View {
         NavigationStack {
@@ -154,8 +148,9 @@ struct ShoppingItemList: View {
     }
     
     private func sortAlphabetically() {
-        print("Сортировать по алфавиту")
+        
     }
+
     
     private func shareList() {
         print("Поделиться")
@@ -174,7 +169,7 @@ struct ShoppingItemList: View {
     }
     
     private func deleteItem(_ item: ShoppingItem) {
-        print("Удалить: \(item.name)")
+        context.delete(item)
     }
     
     private func addItem() {
@@ -192,8 +187,5 @@ enum ShoppingItemListText {
 }
 
 #Preview {
-    ShoppingItemList()
-}
-#Preview("Empty List") {
-    ShoppingItemList(shoppingItems: [])
+    ShoppingItemList(navigationTitle: "Новый год")
 }
