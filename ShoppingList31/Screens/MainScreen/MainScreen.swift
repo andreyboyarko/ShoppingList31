@@ -7,62 +7,75 @@
 import SwiftUI
 
 struct MainScreen: View {
+    
     @Environment(ThemeStore.self) var themeStore
     @State var lists: [ListItem]
-    
+
     var body: some View {
-        NavigationStack {
-            VStack {
-                if lists.isEmpty {
-                    EmptyStateView(viewState: .createShoppingList)
-                        .padding(.top, 88)
-                    Spacer()
-                } else {
-                    mainList
-                }
-            }
-            .background(.appBackground)
-            .safeAreaInset(edge: .bottom) {
-                ActionButton(title: "Создать список", isActive: true) {
-                    print("Pushed button")
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    HStack {
-                        Text("Мои списки")
-                            .font(.screenTitle)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Menu {
-                            ForEach(AppTheme.allCases, id: \.self) { theme in
-                                themeButton(theme)
-                            }
-                            
-                        } label: {
-                            Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
-                        }
-                        
-                        Button {
-                            
-                        } label: {
-                            Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 19))
-                            .foregroundStyle(.textPrimary)
-                            .frame(width: 44, height: 44)
-                    }
-                }
+        VStack {
+            screenTitle
+            if lists.isEmpty {
+                EmptyStateView(viewState: .createShoppingList)
+                    .padding(.top, 88)
+                Spacer()
+            } else {
+                mainList
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .background(.appBackground)
+        .safeAreaInset(edge: .bottom) {
+            ActionButton(title: "Создать список", isActive: true) {
+                print("Pushed button")
+            }
+        }
+    }
+    
+    private var menu: some View {
+        Menu {
+            Menu {
+                ForEach(AppTheme.allCases, id: \.self) { theme in
+                    themeButton(theme)
+                }
+                
+            } label: {
+                Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
+            }
+            
+            Button {
+                
+            } label: {
+                Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 19))
+                .foregroundStyle(.textPrimary)
+                .frame(width: 44, height: 44)
+        }
+    }
+    
+    private var screenTitle: some View {
+        HStack {
+            Text("Мои списки")
+                .font(.screenTitle)
+            Spacer()
+            menu
+        }
+        .frame(height: 52)
+        .padding(.horizontal, 16)
+    }
+    
+    private func themeButton(_ theme: AppTheme) -> some View {
+        Button {
+            themeStore.theme = theme
+        } label: {
+            HStack {
+                if themeStore.theme == theme {
+                    Image(systemName: "checkmark")
+                }
+                Text(theme.rawValue)
+            }
+        }
     }
     
     private var mainList: some View {
@@ -103,19 +116,6 @@ struct MainScreen: View {
         .background(.appBackground)
         .padding(.horizontal, 16)
         .padding(.top, 12)
-    }
-    
-    private func themeButton(_ theme: AppTheme) -> some View {
-        Button {
-            themeStore.theme = theme
-        } label: {
-            HStack {
-                if themeStore.theme == theme {
-                    Image(systemName: "checkmark")
-                }
-                Text(theme.rawValue)
-            }
-        }
     }
 }
 
