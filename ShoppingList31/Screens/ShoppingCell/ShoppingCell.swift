@@ -13,18 +13,21 @@ struct ShoppingCell: View {
     @State var shoppingItemStatus: Bool = false
     
     var body: some View {
-        HStack(spacing: 8) {
-            selectedIcon
-            nameOfItem
-            Spacer()
-            countItem
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
-        separator
-            .onAppear {
-                shoppingItemStatus = shoppingItem.isPurchased
+        VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 8) {
+                selectedIcon
+                nameOfItem
+                Spacer()
+                countItem
             }
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+            separator
+        }
+        .background(Color.appBackground)
+        .onAppear {
+            shoppingItemStatus = shoppingItem.isPurchased
+        }
     }
     
     private var separator: some View {
