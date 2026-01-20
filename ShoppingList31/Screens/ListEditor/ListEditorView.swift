@@ -12,7 +12,7 @@ struct ListEditorView: View {
     
     enum Mode {
         case create
-        case edit(ListItem)
+        case edit(id: ListItem.ID)
         
         var navigationTitle: String {
             switch self {
@@ -37,6 +37,9 @@ struct ListEditorView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
+    @Environment(Router.self) private var router
+    
+    @Query private var items: [ListItem]
     
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -53,10 +56,12 @@ struct ListEditorView: View {
             _selectedColor = State(initialValue: nil)
             _selectedIcon = State(initialValue: nil)
             
-        case .edit(let item):
-            _name = State(initialValue: item.title)
-            _selectedColor = State(initialValue: item.color)
-            _selectedIcon = State(initialValue: item.icon)
+        case .edit(let id):
+            _name = State(initialValue: "")
+            _selectedColor = State(initialValue: nil)
+            _selectedIcon = State(initialValue: nil)
+            
+            _items = Query(filter: #Predicate<ListItem> { $0.id == id })
         }
     }
     
@@ -72,20 +77,18 @@ struct ListEditorView: View {
             
             button
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "chevron.left")
-                        Text(mode.navigationTitle)
-                    }
-                    .foregroundStyle(.textPrimary)
-                    .font(.headline)
-                }
-            }
+        .backButtonWith(title: mode.navigationTitle) {
+            router.pop()
+        }
+        onChange(of: items) { _, newItems in
+            guard
+                case .edit = mode,
+                let item = newItems.first
+            else { return }
+
+            name = item.title
+            selectedColor = item.color
+            selectedIcon = item.icon
         }
     }
     
@@ -119,8 +122,8 @@ struct ListEditorView: View {
                 switch mode {
                 case .create:
                     createList()
-                case .edit(let item):
-                    saveList(item)
+                case .edit(let id):
+                    saveList(id)
                 }
             }
         )
@@ -143,6 +146,13 @@ struct ListEditorView: View {
     private func saveList(_ item: ListItem) {
         item.title = name
         dismiss()
+        print("List created: \(name), \(selectedColor?.id ?? ""), \(selectedIcon?.id ?? "")")
+        router.pop()
+    }
+    
+    private func saveList(_ id: UUID) {
+        print("List edited: \(id), new name: \(name)")
+        router.pop()
     }
 }
 
@@ -150,6 +160,7 @@ struct ListEditorView: View {
     NavigationStack {
         ListEditorView(mode: .create)
             .appBackground()
+            .environment(Router())
     }
 }
 
@@ -163,12 +174,14 @@ struct ListEditorView: View {
     )
     
     NavigationStack {
-        ListEditorView(mode: .edit(item))
+        ListEditorView(mode: .edit(id: item.id))
             .appBackground()
+            .environment(Router())
     }
 }
 
 #Preview("Создать список без NavigationStack") {
     ListEditorView(mode: .create)
         .appBackground()
+        .environment(Router())
 }

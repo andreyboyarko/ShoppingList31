@@ -9,94 +9,92 @@ import SwiftUI
 import SwiftData
 
 struct ShoppingItemList: View {
-    let navigationTitle: String
+    let listId: UUID
+    
+    var navigationTitle: String {
+        shoppingLists.first?.title ?? ""
+    }
+    
     @State private var searchText = ""
     @Query private var shoppingItems: [ShoppingItem]
+    @Query private var shoppingLists: [ListItem]
     
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(Router.self) private var router
+    
+    @State private var currentShoppingList: ListItem?
+    
+    init(listId: UUID) {
+        self.listId = listId
+        _shoppingLists = Query(filter: #Predicate<ListItem> { $0.id == listId })
+    }
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                searchBar
-                
-                if shoppingItems.isEmpty {
-                    EmptyStateView(viewState: .addItemToShoppingList)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    List {
-                        ForEach(shoppingItems) { item in
-                            ShoppingCell(shoppingItem: item)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets())
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    deleteButton(for: item)
-                                    editButton(for: item)
-                                }
-                        }
-                    }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                }
-                
-                Spacer()
-                
-                ActionButton(
-                    title: ShoppingItemListText.addItemButton,
-                    isActive: true,
-                    action: addItem
-                )
-            }
-            .background(Color.appBackground)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                        HStack {
-                            Button {
-                                dismiss()
-                            } label: {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundStyle(.textPrimary)
-                                    .frame(width: 28, height: 44)
+        VStack(spacing: 0) {
+            searchBar
+            
+            if shoppingItems.isEmpty {
+                EmptyStateView(viewState: .addItemToShoppingList)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    ForEach(shoppingItems) { item in
+                        ShoppingCell(shoppingItem: item)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                deleteButton(for: item)
+                                editButton(for: item)
                             }
-                            Text(navigationTitle)
-                                .font(.headline)
-                                .foregroundStyle(.textPrimary)
-                            Spacer()
-                        }
-                
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            sortAlphabetically()
-                        } label: {
-                            Label(ShoppingItemListText.menuSortAlphabetically, systemImage: "arrow.up.arrow.down")
-                        }
-                        
-                        Button {
-                            shareList()
-                        } label: {
-                            Label(ShoppingItemListText.menuShare, systemImage: "square.and.arrow.up")
-                        }
-                        Button {
-                            uncheckAll()
-                        } label: {
-                            Label(ShoppingItemListText.menuUncheckAll, systemImage: "arrow.triangle.2.circlepath")
-                        }
-                        
-                        Button(role: .destructive) {
-                            deletePurchased()
-                        } label: {
-                            Label(ShoppingItemListText.menuDeletePurchased, systemImage: "trash")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 19))
-                            .foregroundStyle(.textPrimary)
-                            .frame(width: 44, height: 44)
                     }
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+            }
+            
+            Spacer()
+            
+            ActionButton(
+                title: ShoppingItemListText.addItemButton,
+                isActive: true,
+                action: addItem
+            )
+        }
+        .background(Color.appBackground)
+        .backButtonWith(title: navigationTitle) {
+            router.pop()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button {
+                        sortAlphabetically()
+                    } label: {
+                        Label(ShoppingItemListText.menuSortAlphabetically, systemImage: "arrow.up.arrow.down")
+                    }
+                    
+                    Button {
+                        shareList()
+                    } label: {
+                        Label(ShoppingItemListText.menuShare, systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        uncheckAll()
+                    } label: {
+                        Label(ShoppingItemListText.menuUncheckAll, systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    
+                    Button(role: .destructive) {
+                        deletePurchased()
+                    } label: {
+                        Label(ShoppingItemListText.menuDeletePurchased, systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 19))
+                        .foregroundStyle(.textPrimary)
+                        .frame(width: 44, height: 44)
                 }
             }
         }
@@ -187,5 +185,15 @@ enum ShoppingItemListText {
 }
 
 #Preview {
-    ShoppingItemList(navigationTitle: "Новый год")
+    NavigationStack {
+        ShoppingItemList(listId: UUID())
+    }
+    .environment(Router())
+}
+
+#Preview("Empty List") {
+    NavigationStack {
+        ShoppingItemList(listId: UUID())
+    }
+    .environment(Router())
 }
