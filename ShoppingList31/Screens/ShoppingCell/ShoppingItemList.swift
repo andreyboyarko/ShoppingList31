@@ -22,7 +22,8 @@ struct ShoppingItemList: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Environment(Router.self) private var router
-    
+    @State private var showingSheet = false
+
     @State private var currentShoppingList: ListItem?
     
     init(listId: UUID) {
@@ -40,7 +41,7 @@ struct ShoppingItemList: View {
             } else {
                 List {
                     ForEach(shoppingItems) { item in
-                        ShoppingCell(shoppingItem: item)
+                        ShoppingCell(list: shoppingLists.first!, shoppingItem: item)
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets())
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -64,6 +65,12 @@ struct ShoppingItemList: View {
         .background(Color.appBackground)
         .backButtonWith(title: navigationTitle) {
             router.pop()
+        }
+        .sheet(isPresented: $showingSheet) {
+            ProductFormView(
+                isPresented: $showingSheet,
+                config: FormConfig(mode: .creating, list: shoppingLists.first!)
+            )
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -154,11 +161,19 @@ struct ShoppingItemList: View {
     }
     
     private func uncheckAll() {
-        print("Снять отметки со всех товаров")
+        shoppingItems.forEach { item in
+            if item.isPurchased {
+                item.isPurchased = false
+            }
+        }
     }
     
     private func deletePurchased() {
-        print("Удалить купленные товары")
+        shoppingItems.forEach { item in
+            if item.isPurchased {
+                context.delete(item)
+            }
+        }
     }
     
     private func editItem(_ item: ShoppingItem) {
@@ -167,10 +182,17 @@ struct ShoppingItemList: View {
     
     private func deleteItem(_ item: ShoppingItem) {
         context.delete(item)
+        
+        guard let list = shoppingLists.first else { return }
+        
+        list.total -= 1
+        if item.isPurchased {
+            list.completed -= 1
+        }
     }
     
     private func addItem() {
-        // Нужно открыть ProductFormView .create
+        showingSheet = true
     }
 }
 
@@ -189,4 +211,3 @@ enum ShoppingItemListText {
     }
     .environment(Router())
 }
-

@@ -92,7 +92,14 @@ struct MainScreen: View {
                             router.push(.editList(list.id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
-                            // копировать / что нужно
+                            let item = ListItem(
+                                color: list.color,
+                                icon: list.icon,
+                                title: list.title,
+                                completed: list.completed,
+                                total: list.total)
+                            
+                            context.insert(item)
                         },
                         SwipeAction(systemImage: "trash", tint: .swipeActionIRed) {
                             context.delete(list)

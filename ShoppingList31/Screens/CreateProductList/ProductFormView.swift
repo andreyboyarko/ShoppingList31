@@ -79,6 +79,8 @@ struct ProductFormView: View {
                     count: count,
                     unit: observed.selectedUnit)
                 context.insert(item)
+                
+                config.list?.total += 1
             } else {
                 guard let count = Int(observed.productCount) else { return }
                 
@@ -201,6 +203,8 @@ extension ProductFormView {
         
         @State private var showingSheet = true
         
+        let item = ListItem(color: .blue, icon: .airplane, title: "", completed: 0, total: 0)
+        
         var body: some View {
             ZStack {
                 Color.orange
@@ -210,7 +214,7 @@ extension ProductFormView {
                 }
             }
             .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .creating))
+                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .creating, list: item))
             }
         }
     }
@@ -221,6 +225,8 @@ extension ProductFormView {
     struct PreviewWrapper: View {
         
         @State private var showingSheet = true
+        
+        let item = ListItem(color: .blue, icon: .airplane, title: "", completed: 0, total: 0)
         
         var body: some View {
             ZStack {
