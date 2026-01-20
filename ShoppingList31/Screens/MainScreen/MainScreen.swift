@@ -108,8 +108,8 @@ struct MainScreen: View {
                                 color: list.color,
                                 icon: list.icon,
                                 title: list.title,
-                                completed: list.completed,
-                                total: list.total)
+                                completed: 0,
+                                total: 0)
                             
                             context.insert(item)
                         },
