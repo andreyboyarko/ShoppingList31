@@ -21,13 +21,28 @@ struct ProductFormView: View {
     var body: some View {
         ZStack {
             Color(.appBackground)
-            VStack(spacing: 20) {
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
                 navigationHeader
                 productNameField
+                    .onChange(of: observed.productName, { _, newValue in
+                        observed.findSuggestions(for: newValue)
+                    })
+                    .padding(.top, 20)
+                
+                if observed.isSuggestionsVisible {
+                    suggestionMenu
+                        .padding(.top, 10)
+                }
+                
                 HStack(spacing: 16) {
                     quantityField
                     unitSelectionField
                 }
+                .padding(.top, 20)
+                .opacity(observed.isSuggestionsVisible ? 0 : 1)
+                
                 if observed.isMenuShowing { UnitSelectionMenu(needShowMenu: $observed.isMenuShowing,
                                                               selectedUnit: $observed.selectedUnit,
                                                               pikerUnitName: $observed.unitPickerSelection)}
@@ -74,6 +89,33 @@ struct ProductFormView: View {
     
     private var productNameField: some View {
         observed.isCreating ? NameTextField(placeholder: "Название товара", text: $observed.productName) : NameTextField(placeholder: "", text: $observed.productName)
+    }
+    
+    private var suggestionMenu: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(observed.suggestedProductsArray, id: \.self) { word in
+                    Button {
+                        observed.setNewProduct(name: word)
+                    } label: {
+                        HStack(spacing: 0) {
+                            Text(word)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 11)
+                                .padding(.horizontal, 16)
+                            Spacer()
+                        }
+                        .background(.surfaceBackground)
+                    }
+                    
+                    Divider()
+                        .padding(.horizontal, 16)
+                        .background(.surfaceBackground)
+                }
+            }
+            .cornerRadius(12)
+        }
     }
     
     private var quantityField: some View {
