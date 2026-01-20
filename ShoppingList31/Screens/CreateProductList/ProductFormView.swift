@@ -161,6 +161,16 @@ extension ProductFormView {
         private var mode: ProductFormViewState
         var isMenuShowing: Bool = false
         
+        private let suggestionService: ProductSuggestionProtocol
+        var suggestedProductsArray: [String] = []
+        var isSuggestionsVisible: Bool {
+            let hasInput = !productName.isEmpty
+            let hasSuggestions = !suggestedProductsArray.isEmpty
+            let isExactMatch =  suggestedProductsArray.first != productName
+            
+            return hasInput && hasSuggestions && isExactMatch
+        }
+        
         var isFormValid: Bool {
             guard !productName.isEmpty,
                   !productCount.isEmpty,
@@ -180,13 +190,13 @@ extension ProductFormView {
         }
         
         var navigationTitle: String {
-            isCreating ? "Создание товара" : "Редактирование товара"
+            isCreating ? "Создание товара" : "Редактирование"
         }
         
-        init(config: FormConfig) {
+        init(config: FormConfig, suggestionService: ProductSuggestionProtocol = ProductSuggestionService()) {
             
             self.mode = config.mode
-            
+            self.suggestionService = suggestionService
             if let product = config.product {
                 self.productName = product.name
                 self.productCount = String(product.count)
@@ -224,38 +234,26 @@ extension ProductFormView {
             productName = ""
             unitPickerSelection = .pieces
             isMenuShowing = false
+            suggestedProductsArray = []
         }
         
         func showMenu() {
             isMenuShowing = true
         }
-    }
-}
-
-#Preview {
-    struct PreviewWrapper: View {
         
-        @State private var showingSheet = true
+        func findSuggestions(for searchText: String) {
+            suggestedProductsArray = suggestionService.findSuggestion(in: searchText)
+        }
         
-        var body: some View {
-            ZStack {
-                Color.orange
-                    .ignoresSafeArea()
-                Button("Показать форму") {
-                    showingSheet = true
-                }
-            }
-            .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .creating))
-            }
+        func setNewProduct(name: String) {
+            productName = name
+            suggestedProductsArray = []
         }
     }
-    return PreviewWrapper()
 }
 
 #Preview {
     struct PreviewWrapper: View {
-        
         @State private var showingSheet = true
         
         var body: some View {
@@ -267,7 +265,7 @@ extension ProductFormView {
                 }
             }
             .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .editing, product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue)))
+                ProductFormView(config: FormConfig(mode: .creating))
             }
         }
     }
