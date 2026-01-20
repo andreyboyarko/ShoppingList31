@@ -7,7 +7,11 @@
 import SwiftUI
 
 struct MainScreen: View {
+    
+    @Environment(ThemeStore.self) var themeStore
+    @Environment(Router.self) private var router
     @State var lists: [ListItem]
+    
     var body: some View {
         VStack {
             screenTitle
@@ -22,8 +26,32 @@ struct MainScreen: View {
         .background(.appBackground)
         .safeAreaInset(edge: .bottom) {
             ActionButton(title: "Создать список", isActive: true) {
-                print("Pushed button")
+                router.push(.createList)
             }
+        }
+    }
+    
+    private var menu: some View {
+        Menu {
+            Menu {
+                ForEach(AppTheme.allCases, id: \.self) { theme in
+                    themeButton(theme)
+                }
+                
+            } label: {
+                Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
+            }
+            
+            Button {
+                
+            } label: {
+                Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 19))
+                .foregroundStyle(.textPrimary)
+                .frame(width: 44, height: 44)
         }
     }
     
@@ -32,9 +60,23 @@ struct MainScreen: View {
             Text("Мои списки")
                 .font(.screenTitle)
             Spacer()
+            menu
         }
         .frame(height: 52)
-        .padding(.leading, 16)
+        .padding(.horizontal, 16)
+    }
+    
+    private func themeButton(_ theme: AppTheme) -> some View {
+        Button {
+            themeStore.theme = theme
+        } label: {
+            HStack {
+                if themeStore.theme == theme {
+                    Image(systemName: "checkmark")
+                }
+                Text(theme.rawValue)
+            }
+        }
     }
     
     private var mainList: some View {
@@ -43,7 +85,7 @@ struct MainScreen: View {
                 SwipeRow(
                     actions: [
                         SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
-                            // редактировать
+                            router.push(.editList(lists[index].id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
                             // копировать / что нужно
@@ -54,6 +96,10 @@ struct MainScreen: View {
                     ]
                 ) {
                     ListCell(listItem: lists[index])
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            router.push(.items(lists[index].id))
+                        }
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -78,10 +124,17 @@ struct MainScreen: View {
     }
 }
 
-#Preview {
+
+#Preview("Списки есть") {
+    let store = ThemeStore()
     MainScreen(lists: ListItem.mockArray)
+        .environment(Router())
+        .environment(store)
 }
 
-#Preview {
+#Preview("Списков нет") {
+    let store = ThemeStore()
     MainScreen(lists: [])
+        .environment(Router())
+        .environment(store)
 }
