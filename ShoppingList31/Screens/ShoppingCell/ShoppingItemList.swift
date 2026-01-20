@@ -148,7 +148,6 @@ struct ShoppingItemList: View {
     private func sortAlphabetically() {
         
     }
-
     
     private func shareList() {
         print("Поделиться")
@@ -163,7 +162,7 @@ struct ShoppingItemList: View {
     }
     
     private func editItem(_ item: ShoppingItem) {
-        print("Редактировать: \(item.name)")
+        // Нужно открыть ProductFormView .editing
     }
     
     private func deleteItem(_ item: ShoppingItem) {
@@ -171,7 +170,7 @@ struct ShoppingItemList: View {
     }
     
     private func addItem() {
-        print("Добавить товар")
+        // Нужно открыть ProductFormView .create
     }
 }
 
@@ -191,9 +190,3 @@ enum ShoppingItemListText {
     .environment(Router())
 }
 
-#Preview("Empty List") {
-    NavigationStack {
-        ShoppingItemList(listId: UUID())
-    }
-    .environment(Router())
-}

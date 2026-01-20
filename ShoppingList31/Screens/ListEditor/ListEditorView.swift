@@ -35,7 +35,6 @@ struct ListEditorView: View {
     @State private var selectedColor: IconColor?
     @State private var selectedIcon: Icon?
     
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Environment(Router.self) private var router
     
@@ -122,8 +121,8 @@ struct ListEditorView: View {
                 switch mode {
                 case .create:
                     createList()
-                case .edit(let id):
-                    saveList(id)
+                case .edit:
+                    saveList()
                 }
             }
         )
@@ -140,18 +139,12 @@ struct ListEditorView: View {
             total: 0
         )
         context.insert(item)
-        dismiss()
-    }
-    
-    private func saveList(_ item: ListItem) {
-        item.title = name
-        dismiss()
-        print("List created: \(name), \(selectedColor?.id ?? ""), \(selectedIcon?.id ?? "")")
         router.pop()
     }
     
-    private func saveList(_ id: UUID) {
-        print("List edited: \(id), new name: \(name)")
+    private func saveList() {
+        guard let item = items.first else { return }
+        item.title = name
         router.pop()
     }
 }
