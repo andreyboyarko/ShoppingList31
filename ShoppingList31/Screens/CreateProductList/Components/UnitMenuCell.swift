@@ -46,7 +46,7 @@ struct UnitMenuCell: View {
     }
     
     private var selectedUnitName: some View {
-        Text(menuElement.rawValue)
+        Text(menuElement.localizedName)
             .font(.body)
             .foregroundColor(.textPrimary)
     }

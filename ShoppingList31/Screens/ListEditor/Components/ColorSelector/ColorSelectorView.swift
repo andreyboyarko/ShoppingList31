@@ -24,7 +24,7 @@ struct ColorSelectorView: View {
     
     private var title: some View {
         HStack {
-            Text("Выберите цвет")
+            Text(String(localized: "Выберите цвет"))
                 .foregroundStyle(.textPrimary)
                 .font(.callout)
             Spacer()

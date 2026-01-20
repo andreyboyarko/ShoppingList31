@@ -15,4 +15,8 @@ enum UnitsProduct: String, CaseIterable, Identifiable {
     case gram = "г"
     case liter = "л"
     case milliliter = "мл"
+    
+    var localizedName: String {
+        String(localized: String.LocalizationValue(rawValue))
+    }
 }

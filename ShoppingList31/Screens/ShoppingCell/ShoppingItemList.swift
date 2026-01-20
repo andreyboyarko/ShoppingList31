@@ -183,12 +183,12 @@ struct ShoppingItemList: View {
 }
 
 enum ShoppingItemListText {
-    static let searchPlaceholder = "Поиск"
-    static let menuSortAlphabetically = "Сортировать по алфавиту"
-    static let menuShare = "Поделиться"
-    static let menuUncheckAll = "Снять отметки со всех товаров"
-    static let menuDeletePurchased = "Удалить купленные товары"
-    static let addItemButton = "Добавить товар"
+    static let searchPlaceholder = String(localized: "Поиск")
+    static let menuSortAlphabetically = String(localized: "Сортировать по Алфавиту")
+    static let menuShare = String(localized: "Поделиться")
+    static let menuUncheckAll = String(localized: "Снять отметки со всех товаров")
+    static let menuDeletePurchased = String(localized: "Удалить купленные товары")
+    static let addItemButton = String(localized: "Добавить товар")
 }
 
 #Preview {

@@ -24,7 +24,7 @@ struct MainScreen: View {
         }
         .background(.appBackground)
         .safeAreaInset(edge: .bottom) {
-            ActionButton(title: "Создать список", isActive: true) {
+            ActionButton(title: String(localized: "Создать список"), isActive: true) {
                 print("Pushed button")
             }
         }
@@ -38,13 +38,13 @@ struct MainScreen: View {
                 }
                 
             } label: {
-                Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
+                Label(String(localized: "Установить тему"), systemImage: "circle.lefthalf.filled.inverse")
             }
             
             Button {
                 
             } label: {
-                Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
+                Label(String(localized: "Сортировать по Алфавиту"), systemImage: "arrow.up.arrow.down")
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -56,7 +56,7 @@ struct MainScreen: View {
     
     private var screenTitle: some View {
         HStack {
-            Text("Мои списки")
+            Text(String(localized: "Мои списки"))
                 .font(.screenTitle)
             Spacer()
             menu
@@ -73,7 +73,7 @@ struct MainScreen: View {
                 if themeStore.theme == theme {
                     Image(systemName: "checkmark")
                 }
-                Text(theme.rawValue)
+                Text(theme.localizedName)
             }
         }
     }

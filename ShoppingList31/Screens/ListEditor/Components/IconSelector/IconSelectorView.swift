@@ -25,7 +25,7 @@ struct IconSelectorView: View {
     
     private var title: some View {
         HStack {
-            Text("Выберите дизайн")
+            Text(String(localized: "Выберите дизайн"))
                 .foregroundStyle(.textPrimary)
                 .font(.callout)
             Spacer()

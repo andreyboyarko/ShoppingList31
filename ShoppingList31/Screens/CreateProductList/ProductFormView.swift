@@ -54,7 +54,7 @@ struct ProductFormView: View {
     }
     
     private var cancelButton: some View {
-        Button("Отменить") {
+        Button(String(localized: "Отменить")) {
             isPresented = false
         }
         .font(.body)
@@ -68,7 +68,7 @@ struct ProductFormView: View {
     }
     
     private var submitButton: some View {
-        Button("Готово") {
+        Button(String(localized: "Готово")) {
             observed.saveToDatabase()
             isPresented = false
         }
@@ -78,11 +78,11 @@ struct ProductFormView: View {
     }
     
     private var productNameField: some View {
-        observed.isCreating ? NameTextField(placeholder: "Название товара", text: $observed.productName) : NameTextField(placeholder: "", text: $observed.productName)
+        observed.isCreating ? NameTextField(placeholder: String(localized: "Название товара"), text: $observed.productName) : NameTextField(placeholder: "", text: $observed.productName)
     }
     
     private var quantityField: some View {
-        observed.isCreating ? NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) : NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
+        observed.isCreating ? NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.phonePad) : NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
     }
     
     private var unitSelectionField: some View {
@@ -102,7 +102,7 @@ struct ProductFormView: View {
     private var customPicker: some View {
         HStack {
             Spacer()
-            Text(observed.unitPickerSelection.rawValue)
+            Text(observed.unitPickerSelection.localizedName)
             Image(systemName: "chevron.up.chevron.down")
         }
         .font(.body)
@@ -143,7 +143,7 @@ extension ProductFormView {
         }
         
         var navigationTitle: String {
-            isCreating ? "Создание товара" : "Редактирование товара"
+            isCreating ? String(localized: "Создание товара") : String(localized: "Редактирование товара")
         }
         
         init(config: FormConfig) {

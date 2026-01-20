@@ -4,21 +4,21 @@
 //
 //  Created by Владимир on 28.12.2025.
 //
-
+import Foundation
 import DeveloperToolsSupport
 
 enum EmptyStateType {
     case createShoppingList
     case addItemToShoppingList
     
-    static let title = "Давайте спланируем покупки!"
+    static let title = String(localized: "Давайте спланируем покупки!")
     
     var subtitle: String {
         switch self {
         case .createShoppingList:
-            "Создайте свой первый список"
+            String(localized: "Создайте свой первый список")
         case .addItemToShoppingList:
-            "Начните добавлять товары"
+            String(localized: "Начните добавлять товары")
         }
     }
     
