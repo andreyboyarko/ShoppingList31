@@ -9,19 +9,14 @@ import SwiftUI
 import SwiftData
 
 struct ProductFormView: View {
-    @Binding var isPresented: Bool
     let config: FormConfig
     @State private var observed: ProductFormObserved
     
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     
-    init (
-        isPresented: Binding<Bool>,
-        config: FormConfig
-    ) {
-        self._isPresented = isPresented
+    init (config: FormConfig) {
         self.config = config
-        
         self._observed = State(initialValue: ProductFormObserved(config: config))
     }
     
@@ -57,7 +52,7 @@ struct ProductFormView: View {
     
     private var cancelButton: some View {
         Button("Отменить") {
-            isPresented = false
+            dismiss()
         }
         .font(.body)
         .foregroundStyle(.textHint)
@@ -93,7 +88,7 @@ struct ProductFormView: View {
                 observed.cleanField()
             }
             
-            isPresented = false
+            dismiss()
         }
         .font(.navigationBarButton)
         .foregroundStyle(observed.isFormValid ? .turquoise : .textHint)
@@ -147,9 +142,9 @@ extension ProductFormView {
         var productCount: String = ""
         var selectedUnit: String = ""
         var unitPickerSelection: UnitsProduct = .pieces
-        
-        private var mode: ProductFormViewState
         var isMenuShowing: Bool = false
+        
+        private let isEditing: Bool
         
         var isFormValid: Bool {
             guard !productName.isEmpty,
@@ -165,16 +160,14 @@ extension ProductFormView {
             selectedUnit.isEmpty || isMenuShowing
         }
         
-        var isCreating: Bool {
-            mode == .creating
-        }
+        var isCreating: Bool { !isEditing }
         
         var navigationTitle: String {
             isCreating ? "Создание товара" : "Редактирование товара"
         }
         
         init(config: FormConfig) {
-            self.mode = config.mode
+            self.isEditing = config.product != nil
             
             if let product = config.product {
                 self.productName = product.name
@@ -201,45 +194,26 @@ extension ProductFormView {
 #Preview {
     struct PreviewWrapper: View {
         
-        @State private var showingSheet = true
+        @State private var formConfig: FormConfig?
         
         let item = ListItem(color: .blue, icon: .airplane, title: "", completed: 0, total: 0)
         
         var body: some View {
-            ZStack {
-                Color.orange
-                    .ignoresSafeArea()
-                Button("Показать форму") {
-                    showingSheet = true
+            NavigationStack {
+                VStack(spacing: 20) {
+                    Button("Создать новый товар") {
+                        formConfig = FormConfig(list: item)
+                    }
+                    Button("Редактировать молоко") {
+                        formConfig = FormConfig(product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue))
+                    }
                 }
             }
-            .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .creating, list: item))
+            .sheet(item: $formConfig) { config in
+                ProductFormView(config: config)
             }
         }
     }
     return PreviewWrapper()
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        
-        @State private var showingSheet = true
-        
-        let item = ListItem(color: .blue, icon: .airplane, title: "", completed: 0, total: 0)
-        
-        var body: some View {
-            ZStack {
-                Color.orange
-                    .ignoresSafeArea()
-                Button("Показать форму") {
-                    showingSheet = true
-                }
-            }
-            .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .editing, product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue)))
-            }
-        }
-    }
-    return PreviewWrapper()
-}

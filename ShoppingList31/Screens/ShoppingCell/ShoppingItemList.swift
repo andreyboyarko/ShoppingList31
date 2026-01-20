@@ -15,16 +15,16 @@ struct ShoppingItemList: View {
         shoppingLists.first?.title ?? ""
     }
     
-    @State private var searchText = ""
-    @Query private var shoppingItems: [ShoppingItem]
-    @Query private var shoppingLists: [ListItem]
-    
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Environment(Router.self) private var router
+    
+    @State private var searchText = ""
+    @State private var formConfig: FormConfig?
     @State private var showingSheet = false
-
-    @State private var currentShoppingList: ListItem?
+    
+    @Query private var shoppingItems: [ShoppingItem]
+    @Query private var shoppingLists: [ListItem]
     
     init(listId: UUID) {
         self.listId = listId
@@ -66,11 +66,8 @@ struct ShoppingItemList: View {
         .backButtonWith(title: navigationTitle) {
             router.pop()
         }
-        .sheet(isPresented: $showingSheet) {
-            ProductFormView(
-                isPresented: $showingSheet,
-                config: FormConfig(mode: .creating, list: shoppingLists.first!)
-            )
+        .sheet(item: $formConfig) { config in
+            ProductFormView(config: config)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -177,7 +174,7 @@ struct ShoppingItemList: View {
     }
     
     private func editItem(_ item: ShoppingItem) {
-        // Нужно открыть ProductFormView .editing
+        formConfig = FormConfig(product: item)
     }
     
     private func deleteItem(_ item: ShoppingItem) {
@@ -192,7 +189,8 @@ struct ShoppingItemList: View {
     }
     
     private func addItem() {
-        showingSheet = true
+        guard let list = shoppingLists.first else { return }
+        formConfig = FormConfig(list: list)
     }
 }
 
