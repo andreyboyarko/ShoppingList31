@@ -7,7 +7,10 @@
 import SwiftUI
 
 struct MainScreen: View {
+    
+    @Environment(ThemeStore.self) var themeStore
     @State var lists: [ListItem]
+
     var body: some View {
         VStack {
             screenTitle
@@ -27,14 +30,52 @@ struct MainScreen: View {
         }
     }
     
+    private var menu: some View {
+        Menu {
+            Menu {
+                ForEach(AppTheme.allCases, id: \.self) { theme in
+                    themeButton(theme)
+                }
+                
+            } label: {
+                Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
+            }
+            
+            Button {
+                
+            } label: {
+                Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 19))
+                .foregroundStyle(.textPrimary)
+                .frame(width: 44, height: 44)
+        }
+    }
+    
     private var screenTitle: some View {
         HStack {
             Text("Мои списки")
                 .font(.screenTitle)
             Spacer()
+            menu
         }
         .frame(height: 52)
-        .padding(.leading, 16)
+        .padding(.horizontal, 16)
+    }
+    
+    private func themeButton(_ theme: AppTheme) -> some View {
+        Button {
+            themeStore.theme = theme
+        } label: {
+            HStack {
+                if themeStore.theme == theme {
+                    Image(systemName: "checkmark")
+                }
+                Text(theme.rawValue)
+            }
+        }
     }
     
     private var mainList: some View {
@@ -79,9 +120,15 @@ struct MainScreen: View {
 }
 
 #Preview {
+    let store = ThemeStore()
+    
     MainScreen(lists: ListItem.mockArray)
+        .environment(store)
 }
 
 #Preview {
+    let store = ThemeStore()
+    
     MainScreen(lists: [])
+        .environment(store)
 }
