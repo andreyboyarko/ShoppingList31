@@ -9,17 +9,12 @@ import SwiftUI
 
 struct ProductFormView: View {
     
-    @Binding var isPresented: Bool
     let config: FormConfig
     @State private var observed: ProductFormObserved
+    @Environment(\.dismiss) private var dismiss
     
-    init (
-        isPresented: Binding<Bool>,
-        config: FormConfig
-    ) {
-        self._isPresented = isPresented
+    init(config: FormConfig) {
         self.config = config
-        
         self._observed = State(initialValue: ProductFormObserved(config: config))
     }
     
@@ -55,7 +50,7 @@ struct ProductFormView: View {
     
     private var cancelButton: some View {
         Button("Отменить") {
-            isPresented = false
+            dismiss()
         }
         .font(.body)
         .foregroundStyle(.textHint)
@@ -70,7 +65,7 @@ struct ProductFormView: View {
     private var submitButton: some View {
         Button("Готово") {
             observed.saveToDatabase()
-            isPresented = false
+            dismiss()
         }
         .font(.navigationBarButton)
         .foregroundStyle(observed.isFormValid ? .turquoise : .textHint)
