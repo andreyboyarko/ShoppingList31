@@ -21,10 +21,26 @@ struct ShoppingItemList: View {
     
     @State private var searchText = ""
     @State private var formConfig: FormConfig?
-    @State private var showingSheet = false
+    @State private var isAlphabeticalSortEnabled = false
     
     @Query private var shoppingItems: [ShoppingItem]
     @Query private var shoppingLists: [ListItem]
+    
+    private var visibleItems: [ShoppingItem] {
+        let filtered = searchText.isEmpty
+            ? shoppingItems
+            : shoppingItems.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+
+        if isAlphabeticalSortEnabled {
+            return filtered.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        } else {
+            return filtered
+        }
+    }
     
     init(listId: UUID) {
         self.listId = listId
@@ -43,14 +59,16 @@ struct ShoppingItemList: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
-                    ForEach(shoppingItems) { item in
-                        ShoppingCell(list: shoppingLists.first!, shoppingItem: item)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets())
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                deleteButton(for: item)
-                                editButton(for: item)
-                            }
+                    ForEach(visibleItems) { item in
+                        if let list = shoppingLists.first {
+                            ShoppingCell(list: list, shoppingItem: item)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets())
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    deleteButton(for: item)
+                                    editButton(for: item)
+                                }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -153,6 +171,7 @@ struct ShoppingItemList: View {
     }
     
     private func sortAlphabetically() {
+        isAlphabeticalSortEnabled.toggle()
     }
     
     private func shareList() {

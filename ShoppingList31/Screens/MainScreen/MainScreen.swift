@@ -14,6 +14,19 @@ struct MainScreen: View {
     
     @Query private var lists: [ListItem]
     
+    @State private var isAlphabeticalSortEnabled = false
+    
+    private var visibleLists: [ListItem] {
+        if isAlphabeticalSortEnabled {
+            return lists.sorted {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        } else {
+            return lists
+        }
+    }
+
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -41,13 +54,12 @@ struct MainScreen: View {
                 ForEach(AppTheme.allCases, id: \.self) { theme in
                     themeButton(theme)
                 }
-                
             } label: {
                 Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
             }
             
             Button {
-                
+                isAlphabeticalSortEnabled.toggle()
             } label: {
                 Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
             }
@@ -85,7 +97,7 @@ struct MainScreen: View {
     
     private var mainList: some View {
         List {
-            ForEach(lists) { list in
+            ForEach(visibleLists) { list in
                 SwipeRow(
                     actions: [
                         SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
