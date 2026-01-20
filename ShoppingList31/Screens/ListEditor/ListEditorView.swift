@@ -51,17 +51,15 @@ struct ListEditorView: View {
         
         switch mode {
         case .create:
-            _name = State(initialValue: "")
-            _selectedColor = State(initialValue: nil)
-            _selectedIcon = State(initialValue: nil)
-            
+            _items = Query(filter: #Predicate<ListItem> { _ in false })
+
         case .edit(let id):
-            _name = State(initialValue: "")
-            _selectedColor = State(initialValue: nil)
-            _selectedIcon = State(initialValue: nil)
-            
             _items = Query(filter: #Predicate<ListItem> { $0.id == id })
         }
+
+        _name = State(initialValue: "")
+        _selectedColor = State(initialValue: nil)
+        _selectedIcon = State(initialValue: nil)
     }
     
     var body: some View {
@@ -79,10 +77,10 @@ struct ListEditorView: View {
         .backButtonWith(title: mode.navigationTitle) {
             router.pop()
         }
-        onChange(of: items) { _, newItems in
+        .task {
             guard
                 case .edit = mode,
-                let item = newItems.first
+                let item = items.first
             else { return }
 
             name = item.title
