@@ -16,10 +16,13 @@ final class ShoppingItem: Identifiable {
     var unit: String
     var isPurchased: Bool
     
-    init(name: String, count: Int, unit: String, isSelected: Bool = false) {
+    var listId: UUID
+    
+    init(name: String, count: Int, unit: String, isSelected: Bool = false, listId: UUID) {
         self.name = name
         self.count = count
         self.unit = unit
         self.isPurchased = isSelected
+        self.listId = listId
     }
 }

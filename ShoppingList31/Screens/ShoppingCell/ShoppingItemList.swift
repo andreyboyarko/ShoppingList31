@@ -29,6 +29,9 @@ struct ShoppingItemList: View {
     init(listId: UUID) {
         self.listId = listId
         _shoppingLists = Query(filter: #Predicate<ListItem> { $0.id == listId })
+        _shoppingItems = Query(
+            filter: #Predicate<ShoppingItem> { $0.listId == listId }
+        )
     }
     
     var body: some View {
@@ -150,7 +153,6 @@ struct ShoppingItemList: View {
     }
     
     private func sortAlphabetically() {
-        
     }
     
     private func shareList() {

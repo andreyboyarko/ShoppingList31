@@ -74,7 +74,9 @@ struct ShoppingCell: View {
         name: "Молоко",
         count: 2,
         unit: "л",
-        isSelected: true
+        isSelected: true,
+        listId: UUID()
+        
     )
     
     let list = ListItem(
@@ -90,11 +92,11 @@ struct ShoppingCell: View {
 
 #Preview {
     let mockArray = [
-        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false),
-        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true),
-        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false),
-        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true),
-        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false)
+        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false, listId: UUID()),
+        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true, listId: UUID()),
+        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false, listId: UUID()),
+        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true, listId: UUID()),
+        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false, listId: UUID())
     ]
     
     let list = ListItem(
