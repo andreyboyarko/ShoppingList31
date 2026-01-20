@@ -9,8 +9,8 @@ import SwiftUI
 
 @main
 struct ShoppingList31App: App {
-    @AppStorage("app_theme")
-    private var storedTheme: AppTheme = .system
+    @AppStorage("didShowOnboarding") private var didShowOnboarding = false
+    @AppStorage("app_theme") private var storedTheme: AppTheme = .system
     
     @State private var themeStore = ThemeStore()
     
@@ -20,12 +20,19 @@ struct ShoppingList31App: App {
     
     var body: some Scene {
         WindowGroup {
-            MainScreen(lists: ListItem.mockArray)
-                .onChange(of: themeStore.theme, { _, newValue in
-                    storedTheme = newValue
-                })
-                .preferredColorScheme(colorScheme(for: themeStore.theme))
-                .environment(themeStore)
+            if didShowOnboarding {
+                MainScreen(lists: ListItem.mockArray)
+                    .withRouter()
+                    .onChange(of: themeStore.theme, { _, newValue in
+                        storedTheme = newValue
+                    })
+                    .preferredColorScheme(colorScheme(for: themeStore.theme))
+                    .environment(themeStore)
+            } else {
+                WelcomeView {
+                    didShowOnboarding = true
+                }
+            }
         }
     }
 }

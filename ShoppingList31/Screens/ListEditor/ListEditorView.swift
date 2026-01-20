@@ -11,7 +11,7 @@ struct ListEditorView: View {
     
     enum Mode {
         case create
-        case edit(ListItem)
+        case edit(id: ListItem.ID)
         
         var navigationTitle: String {
             switch self {
@@ -34,7 +34,7 @@ struct ListEditorView: View {
     @State private var selectedColor: IconColor?
     @State private var selectedIcon: Icon?
     
-    @Environment(\.dismiss) private var dismiss
+    @Environment(Router.self) private var router
     
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -51,7 +51,9 @@ struct ListEditorView: View {
             _selectedColor = State(initialValue: nil)
             _selectedIcon = State(initialValue: nil)
             
-        case .edit(let item):
+        case .edit(let id):
+            let item = ListItem.mockArray.first { $0.id == id }
+            ?? ListItem.mockArray.first!
             _name = State(initialValue: item.title)
             _selectedColor = State(initialValue: item.color)
             _selectedIcon = State(initialValue: item.icon)
@@ -70,20 +72,8 @@ struct ListEditorView: View {
             
             button
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "chevron.left")
-                        Text(mode.navigationTitle)
-                    }
-                    .foregroundStyle(.textPrimary)
-                    .font(.headline)
-                }
-            }
+        .backButtonWith(title: mode.navigationTitle) {
+            router.pop()
         }
     }
     
@@ -117,8 +107,8 @@ struct ListEditorView: View {
                 switch mode {
                 case .create:
                     createList()
-                case .edit(let item):
-                    saveList(item)
+                case .edit(let id):
+                    saveList(id)
                 }
             }
         )
@@ -126,10 +116,12 @@ struct ListEditorView: View {
     
     private func createList() {
         print("List created: \(name), \(selectedColor?.id ?? ""), \(selectedIcon?.id ?? "")")
+        router.pop()
     }
     
-    private func saveList(_ item: ListItem) {
-        print("List edited: \(item.id), new name: \(name)")
+    private func saveList(_ id: UUID) {
+        print("List edited: \(id), new name: \(name)")
+        router.pop()
     }
 }
 
@@ -137,17 +129,20 @@ struct ListEditorView: View {
     NavigationStack {
         ListEditorView(mode: .create)
             .appBackground()
+            .environment(Router())
     }
 }
 
 #Preview("Редактировать список") {
     NavigationStack {
-        ListEditorView(mode: .edit(ListItem.mock))
+        ListEditorView(mode: .edit(id: ListItem.mock.id))
             .appBackground()
+            .environment(Router())
     }
 }
 
 #Preview("Создать список без NavigationStack") {
     ListEditorView(mode: .create)
         .appBackground()
+        .environment(Router())
 }
