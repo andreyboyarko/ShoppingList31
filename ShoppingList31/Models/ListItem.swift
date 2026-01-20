@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct ListItem: Identifiable {
+struct ListItem: Identifiable, Hashable {
     let id: UUID = UUID()
     let color: IconColor
     let icon: Icon
