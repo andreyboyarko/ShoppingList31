@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ListEditorView: View {
     
@@ -34,7 +35,10 @@ struct ListEditorView: View {
     @State private var selectedColor: IconColor?
     @State private var selectedIcon: Icon?
     
+    @Environment(\.modelContext) private var context
     @Environment(Router.self) private var router
+    
+    @Query private var items: [ListItem]
     
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -47,17 +51,15 @@ struct ListEditorView: View {
         
         switch mode {
         case .create:
-            _name = State(initialValue: "")
-            _selectedColor = State(initialValue: nil)
-            _selectedIcon = State(initialValue: nil)
-            
+            _items = Query(filter: #Predicate<ListItem> { _ in false })
+
         case .edit(let id):
-            let item = ListItem.mockArray.first { $0.id == id }
-            ?? ListItem.mockArray.first!
-            _name = State(initialValue: item.title)
-            _selectedColor = State(initialValue: item.color)
-            _selectedIcon = State(initialValue: item.icon)
+            _items = Query(filter: #Predicate<ListItem> { $0.id == id })
         }
+
+        _name = State(initialValue: "")
+        _selectedColor = State(initialValue: nil)
+        _selectedIcon = State(initialValue: nil)
     }
     
     var body: some View {
@@ -74,6 +76,16 @@ struct ListEditorView: View {
         }
         .backButtonWith(title: mode.navigationTitle) {
             router.pop()
+        }
+        .task {
+            guard
+                case .edit = mode,
+                let item = items.first
+            else { return }
+
+            name = item.title
+            selectedColor = item.color
+            selectedIcon = item.icon
         }
     }
     
@@ -107,20 +119,36 @@ struct ListEditorView: View {
                 switch mode {
                 case .create:
                     createList()
-                case .edit(let id):
-                    saveList(id)
+                case .edit:
+                    saveList()
                 }
             }
         )
     }
     
     private func createList() {
-        print("List created: \(name), \(selectedColor?.id ?? ""), \(selectedIcon?.id ?? "")")
+        guard let selectedColor, let selectedIcon else { return }
+        
+        let item = ListItem(
+            color: selectedColor,
+            icon: selectedIcon,
+            title: name,
+            completed: 0,
+            total: 0
+        )
+        context.insert(item)
         router.pop()
     }
     
-    private func saveList(_ id: UUID) {
-        print("List edited: \(id), new name: \(name)")
+    private func saveList() {
+        guard let item = items.first,
+              let icon = selectedIcon,
+              let color = selectedColor
+        else { return }
+        
+        item.title = name
+        item.color = color
+        item.icon = icon
         router.pop()
     }
 }
@@ -134,8 +162,16 @@ struct ListEditorView: View {
 }
 
 #Preview("Редактировать список") {
+    let item = ListItem(
+        color: .blue,
+        icon: .calendarNumber,
+        title: "Новый год",
+        completed: 10,
+        total: 20
+    )
+    
     NavigationStack {
-        ListEditorView(mode: .edit(id: ListItem.mock.id))
+        ListEditorView(mode: .edit(id: item.id))
             .appBackground()
             .environment(Router())
     }

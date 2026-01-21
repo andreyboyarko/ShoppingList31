@@ -5,17 +5,37 @@
 //  Created by Владимир on 15.01.2026.
 //
 
-struct FormConfig {
-    let mode: ProductFormViewState
-    let product: ShoppingItem?
+import Foundation
+
+struct FormConfig: Identifiable {
+//    let mode: ProductFormViewState
+//    let product: ShoppingItem?
+//    let list: ListItem?
+//    
+//    init(mode: ProductFormViewState, product: ShoppingItem? = nil, list: ListItem? = nil) {
+//        
+//        if mode == .editing && product == nil {
+//            fatalError("Для редактирования нужно передать продукт")
+//        }
+//        
+//        self.mode = mode
+//        self.product = product
+//        self.list = list
+//    }
     
-    init(mode: ProductFormViewState, product: ShoppingItem? = nil) {
-        
-        if mode == .editing && product == nil {
-            fatalError("Для редактирования нужно передать продукт")
-        }
-        
-        self.mode = mode
+    let id = UUID()
+    let product: ShoppingItem?
+    let list: ListItem?
+
+    /// Создание товара
+    init(list: ListItem) {
+        self.product = nil
+        self.list = list
+    }
+
+    /// Редактирование товара
+    init(product: ShoppingItem) {
         self.product = product
+        self.list = nil
     }
 }

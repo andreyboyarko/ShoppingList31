@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum IconColor: String, CaseIterable, Identifiable {
+enum IconColor: String, CaseIterable, Identifiable, Codable {
     case green, purple, blue, red, yellow
     
     var id: String { rawValue }

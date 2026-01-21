@@ -6,20 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ProductFormView: View {
-    
-    @Binding var isPresented: Bool
     let config: FormConfig
     @State private var observed: ProductFormObserved
     
-    init (
-        isPresented: Binding<Bool>,
-        config: FormConfig
-    ) {
-        self._isPresented = isPresented
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    
+    init (config: FormConfig) {
         self.config = config
-        
         self._observed = State(initialValue: ProductFormObserved(config: config))
     }
     
@@ -55,7 +52,7 @@ struct ProductFormView: View {
     
     private var cancelButton: some View {
         Button(String(localized: "Отменить")) {
-            isPresented = false
+            dismiss()
         }
         .font(.body)
         .foregroundStyle(.textHint)
@@ -68,9 +65,35 @@ struct ProductFormView: View {
     }
     
     private var submitButton: some View {
-        Button(String(localized: "Готово")) {
-            observed.saveToDatabase()
-            isPresented = false
+        Button(String(localized: "Готово")) { {
+            if observed.isCreating {
+                guard let count = Int(observed.productCount),
+                      let list = config.list
+                else { return }
+                
+                
+                let item = ShoppingItem(
+                    name: observed.productName,
+                    count: count,
+                    unit: observed.selectedUnit,
+                    list: list)
+                
+                context.insert(item)
+                
+                config.list?.total += 1
+            } else {
+                guard let count = Int(observed.productCount) else { return }
+                
+                config.product?.name = observed.productName
+                config.product?.count = count
+                config.product?.unit = observed.selectedUnit
+            }
+            
+            if observed.isCreating {
+                observed.cleanField()
+            }
+            
+            dismiss()
         }
         .font(.navigationBarButton)
         .foregroundStyle(observed.isFormValid ? .turquoise : .textHint)
@@ -78,11 +101,15 @@ struct ProductFormView: View {
     }
     
     private var productNameField: some View {
-        observed.isCreating ? NameTextField(placeholder: String(localized: "Название товара"), text: $observed.productName) : NameTextField(placeholder: "", text: $observed.productName)
+        observed.isCreating ?
+        NameTextField(placeholder: String(localized: "Название товара"), text: $observed.productName) :
+        NameTextField(placeholder: "", text: $observed.productName)
     }
     
     private var quantityField: some View {
-        observed.isCreating ? NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.phonePad) : NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
+        observed.isCreating ?
+        NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.phonePad) :
+        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
     }
     
     private var unitSelectionField: some View {
@@ -120,9 +147,9 @@ extension ProductFormView {
         var productCount: String = ""
         var selectedUnit: String = ""
         var unitPickerSelection: UnitsProduct = .pieces
-        
-        private var mode: ProductFormViewState
         var isMenuShowing: Bool = false
+        
+        private let isEditing: Bool
         
         var isFormValid: Bool {
             guard !productName.isEmpty,
@@ -138,46 +165,20 @@ extension ProductFormView {
             selectedUnit.isEmpty || isMenuShowing
         }
         
-        var isCreating: Bool {
-            mode == .creating
-        }
+        var isCreating: Bool { !isEditing }
         
         var navigationTitle: String {
             isCreating ? String(localized: "Создание товара") : String(localized: "Редактирование товара")
         }
         
         init(config: FormConfig) {
-            
-            self.mode = config.mode
+            self.isEditing = config.product != nil
             
             if let product = config.product {
                 self.productName = product.name
                 self.productCount = String(product.count)
                 self.selectedUnit = product.unit
                 self.unitPickerSelection = UnitsProduct(rawValue: product.unit) ?? UnitsProduct.pieces
-            }
-        }
-        
-        func saveToDatabase() {
-            guard isFormValid  else { return }
-            
-            // Сохранить в SwiftData
-            if isCreating {
-                print("[ProductFormObserved/saveToDatabase] Сохранение в БД:")
-                print("  Название: \(productName)")
-                print("  Количество: \(productCount)")
-                print("  Единица: \(selectedUnit)")
-                print("  Режим: \(mode)")
-            } else {
-                print("[ProductFormObserved/saveToDatabase] Изменения в БД:")
-                print("  Новое Название: \(productName)")
-                print("  Новое Количество: \(productCount)")
-                print("  Новая Единица: \(selectedUnit)")
-                print("  Режим: \(mode)")
-            }
-            
-            if isCreating {
-                cleanField()
             }
         }
         
@@ -198,41 +199,26 @@ extension ProductFormView {
 #Preview {
     struct PreviewWrapper: View {
         
-        @State private var showingSheet = true
+        @State private var formConfig: FormConfig?
+        
+        let item = ListItem(color: .blue, icon: .airplane, title: "", completed: 0, total: 0)
         
         var body: some View {
-            ZStack {
-                Color.orange
-                    .ignoresSafeArea()
-                Button("Показать форму") {
-                    showingSheet = true
+            NavigationStack {
+                VStack(spacing: 20) {
+                    Button("Создать новый товар") {
+                        formConfig = FormConfig(list: item)
+                    }
+                    Button("Редактировать молоко") {
+                        formConfig = FormConfig(product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue, list: item))
+                    }
                 }
             }
-            .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .creating))
+            .sheet(item: $formConfig) { config in
+                ProductFormView(config: config)
             }
         }
     }
     return PreviewWrapper()
 }
 
-#Preview {
-    struct PreviewWrapper: View {
-        
-        @State private var showingSheet = true
-        
-        var body: some View {
-            ZStack {
-                Color.orange
-                    .ignoresSafeArea()
-                Button("Показать форму") {
-                    showingSheet = true
-                }
-            }
-            .sheet(isPresented: $showingSheet) {
-                ProductFormView(isPresented: $showingSheet, config: FormConfig(mode: .editing, product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue)))
-            }
-        }
-    }
-    return PreviewWrapper()
-}
