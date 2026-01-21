@@ -122,7 +122,7 @@ struct ProductFormView: View {
     private var suggestionMenu: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(observed.suggestedProductsArray, id: \.self) { word in
+                ForEach(Array(observed.suggestedProductsArray.enumerated()), id: \.element) { index, word in
                     Button {
                         observed.setNewProduct(name: word)
                     } label: {
@@ -136,10 +136,11 @@ struct ProductFormView: View {
                         }
                         .background(.surfaceBackground)
                     }
-                    
-                    Divider()
-                        .padding(.horizontal, 16)
-                        .background(.surfaceBackground)
+                    if index != observed.suggestedProductsArray.count - 1 {
+                        Divider()
+                            .padding(.horizontal, 16)
+                            .background(.surfaceBackground)
+                    }
                 }
             }
             .cornerRadius(12)
