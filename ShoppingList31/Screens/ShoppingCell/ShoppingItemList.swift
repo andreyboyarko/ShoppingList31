@@ -200,9 +200,13 @@ struct ShoppingItemList: View {
     }
     
     private func deletePurchased() {
+        guard let list = shoppingLists.first else { return }
+        
         shoppingItems.forEach { item in
             if item.isPurchased {
                 context.delete(item)
+                list.completed -= 1
+                list.total -= 1
             }
         }
     }
