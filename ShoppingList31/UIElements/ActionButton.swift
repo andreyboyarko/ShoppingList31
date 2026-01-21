@@ -11,7 +11,7 @@ struct ActionButton: View {
     let title: String
     let isActive: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -26,11 +26,11 @@ struct ActionButton: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 20)
     }
-
+    
     private var backgroundColor: Color {
         isActive ? .turquoise : .grayButton
     }
-
+    
     private var textColor: Color {
         isActive ? .textButton : .textHint
     }
@@ -38,7 +38,7 @@ struct ActionButton: View {
 
 #Preview("Active") {
     Spacer()
-
+    
     ActionButton(title: "Создать список", isActive: true) {
         print("Pushed button")
     }
@@ -46,7 +46,7 @@ struct ActionButton: View {
 
 #Preview("Inactive") {
     Spacer()
-
+    
     ActionButton(title: "Создать список", isActive: false) {
         print("Pushed button")
     }

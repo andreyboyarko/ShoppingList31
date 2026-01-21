@@ -29,11 +29,11 @@ struct ShoppingItemList: View {
     
     private var visibleItems: [ShoppingItem] {
         let filtered = searchText.isEmpty
-            ? shoppingItems
-            : shoppingItems.filter {
-                $0.name.localizedCaseInsensitiveContains(searchText)
-            }
-
+        ? shoppingItems
+        : shoppingItems.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText)
+        }
+        
         if isAlphabeticalSortEnabled {
             return filtered.sorted {
                 $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
@@ -134,9 +134,12 @@ struct ShoppingItemList: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .font(.system(size: 19))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
                         .foregroundStyle(.textPrimary)
                         .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
             }
         }

@@ -12,25 +12,25 @@ import SwiftUI
 /// - Parameter text: @State поле для вводимого текста (через $)
 /// - Parameter state: @State поле для управления состоянием
 struct NameTextField: View {
-
+    
     enum TextFieldState: Equatable {
         case normal
         case error(message: String)
     }
-
+    
     let placeholder: String
     @Binding var text: String
     var state: TextFieldState = .normal
-
+    
     @FocusState private var isFocused: Bool
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(.surfaceBackground)
                     .stroke(borderColor, lineWidth: 0.5)
-
+                
                 HStack(spacing: 8) {
                     TextField(placeholder, text: $text)
                         .font(.body)
@@ -39,7 +39,7 @@ struct NameTextField: View {
                         .padding(.leading, 16)
                         .padding(.trailing, text.isEmpty ? 16 : 0)
                         .frame(height: 54)
-
+                    
                     if !text.isEmpty && isFocused {
                         Button {
                             text = ""
@@ -55,7 +55,7 @@ struct NameTextField: View {
                 }
             }
             .frame(height: 54)
-
+            
             if case .error(let message) = state {
                 Text(message)
                     .font(.footnote)
@@ -64,7 +64,7 @@ struct NameTextField: View {
             }
         }
     }
-
+    
     private var borderColor: Color {
         switch state {
         case .normal: .clear

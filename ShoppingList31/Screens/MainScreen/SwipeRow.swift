@@ -12,14 +12,14 @@ struct SwipeRow<Content: View>: View {
     let buttonWidth: CGFloat
     let actions: [SwipeAction]
     let content: Content
-
+    
     @State private var offsetX: CGFloat = 0
     @State private var isOpen: Bool = false
-
+    
     private var maxReveal: CGFloat {
         CGFloat(actions.count) * buttonWidth
     }
-
+    
     init(
         height: CGFloat = 84,
         cornerRadius: CGFloat = 16,
@@ -33,10 +33,10 @@ struct SwipeRow<Content: View>: View {
         self.actions = actions
         self.content = content()
     }
-
+    
     var body: some View {
         ZStack(alignment: .trailing) {
-
+            
             // MARK: - Swipe actions (background)
             HStack(spacing: 0) {
                 ForEach(actions) { action in
@@ -55,7 +55,7 @@ struct SwipeRow<Content: View>: View {
             }
             .frame(width: maxReveal, height: height)
             .frame(maxWidth: .infinity, alignment: .trailing)
-
+            
             // MARK: - Content
             content
                 .frame(maxWidth: .infinity)
@@ -78,7 +78,7 @@ struct SwipeRow<Content: View>: View {
         }
         .simultaneousGesture(dragGesture)
     }
-
+    
     // MARK: - Gesture
     private var dragGesture: some Gesture {
         DragGesture(minimumDistance: 0)
@@ -86,10 +86,10 @@ struct SwipeRow<Content: View>: View {
                 if abs(value.translation.height) > abs(value.translation.width) + 30 {
                     return
                 }
-
+                
                 let baseOffset = isOpen ? -maxReveal : 0
                 let proposed = baseOffset + value.translation.width
-
+                
                 offsetX = clamp(proposed, min: -maxReveal, max: 0)
             }
             .onEnded { value in
@@ -97,11 +97,11 @@ struct SwipeRow<Content: View>: View {
                     close()
                     return
                 }
-
+                
                 let shouldOpen =
-                    (-offsetX > maxReveal * 0.35) ||
-                    value.predictedEndTranslation.width < -40
-
+                (-offsetX > maxReveal * 0.35) ||
+                value.predictedEndTranslation.width < -40
+                
                 if shouldOpen {
                     open()
                 } else {
@@ -109,18 +109,18 @@ struct SwipeRow<Content: View>: View {
                 }
             }
     }
-
+    
     // MARK: - Helpers
     private func open() {
         offsetX = -maxReveal
         isOpen = true
     }
-
+    
     private func close() {
         offsetX = 0
         isOpen = false
     }
-
+    
     private func clamp(_ value: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
         Swift.max(min, Swift.min(max, value))
     }
