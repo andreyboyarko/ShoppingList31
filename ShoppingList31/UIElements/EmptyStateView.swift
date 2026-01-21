@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct EmptyStateView: View {
-        
+    
     let viewState: EmptyStateType
-        
+    
     var body: some View {
         VStack(spacing: 28) {
             Image(viewState.imageResource)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
-              
+            
             VStack(spacing: 4) {
                 Text(EmptyStateType.title)
                     .font(.smallTitle)
@@ -34,5 +34,5 @@ struct EmptyStateView: View {
 }
 
 #Preview("createShoppingList") {
-   EmptyStateView(viewState: .createShoppingList)
+    EmptyStateView(viewState: .createShoppingList)
 }

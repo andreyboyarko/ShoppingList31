@@ -52,11 +52,11 @@ struct ListEditorView: View {
         switch mode {
         case .create:
             _items = Query(filter: #Predicate<ListItem> { _ in false })
-
+            
         case .edit(let id):
             _items = Query(filter: #Predicate<ListItem> { $0.id == id })
         }
-
+        
         _name = State(initialValue: "")
         _selectedColor = State(initialValue: nil)
         _selectedIcon = State(initialValue: nil)
@@ -82,7 +82,7 @@ struct ListEditorView: View {
                 case .edit = mode,
                 let item = items.first
             else { return }
-
+            
             name = item.title
             selectedColor = item.color
             selectedIcon = item.icon

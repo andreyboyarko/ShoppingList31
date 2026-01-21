@@ -11,9 +11,8 @@ import SwiftData
 struct ProductFormView: View {
     let config: FormConfig
     @State private var observed: ProductFormObserved
-    
-    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     
     init (config: FormConfig) {
         self.config = config
@@ -23,13 +22,28 @@ struct ProductFormView: View {
     var body: some View {
         ZStack {
             Color(.appBackground)
-            VStack(spacing: 20) {
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
                 navigationHeader
                 productNameField
+                    .onChange(of: observed.productName, { _, newValue in
+                        observed.findSuggestions(for: newValue)
+                    })
+                    .padding(.top, 20)
+                
+                if observed.isSuggestionsVisible {
+                    suggestionMenu
+                        .padding(.top, 10)
+                }
+                
                 HStack(spacing: 16) {
                     quantityField
                     unitSelectionField
                 }
+                .padding(.top, 20)
+                .opacity(observed.isSuggestionsVisible ? 0 : 1)
+                
                 if observed.isMenuShowing { UnitSelectionMenu(needShowMenu: $observed.isMenuShowing,
                                                               selectedUnit: $observed.selectedUnit,
                                                               pikerUnitName: $observed.unitPickerSelection)}
@@ -65,12 +79,12 @@ struct ProductFormView: View {
     }
     
     private var submitButton: some View {
-        Button(String(localized: "Готово")) { {
+        Button("Готово") {
+            
             if observed.isCreating {
                 guard let count = Int(observed.productCount),
                       let list = config.list
                 else { return }
-                
                 
                 let item = ShoppingItem(
                     name: observed.productName,
@@ -92,7 +106,6 @@ struct ProductFormView: View {
             if observed.isCreating {
                 observed.cleanField()
             }
-            
             dismiss()
         }
         .font(.navigationBarButton)
@@ -104,6 +117,34 @@ struct ProductFormView: View {
         observed.isCreating ?
         NameTextField(placeholder: String(localized: "Название товара"), text: $observed.productName) :
         NameTextField(placeholder: "", text: $observed.productName)
+    }
+    
+    private var suggestionMenu: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(Array(observed.suggestedProductsArray.enumerated()), id: \.element) { index, word in
+                    Button {
+                        observed.setNewProduct(name: word)
+                    } label: {
+                        HStack(spacing: 0) {
+                            Text(word)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 11)
+                                .padding(.horizontal, 16)
+                            Spacer()
+                        }
+                        .background(.surfaceBackground)
+                    }
+                    if index != observed.suggestedProductsArray.count - 1 {
+                        Divider()
+                            .padding(.horizontal, 16)
+                            .background(.surfaceBackground)
+                    }
+                }
+            }
+            .cornerRadius(12)
+        }
     }
     
     private var quantityField: some View {
@@ -149,6 +190,16 @@ extension ProductFormView {
         var unitPickerSelection: UnitsProduct = .pieces
         var isMenuShowing: Bool = false
         
+        private let suggestionService: ProductSuggestionProtocol
+        var suggestedProductsArray: [String] = []
+        var isSuggestionsVisible: Bool {
+            let hasInput = !productName.isEmpty
+            let hasSuggestions = !suggestedProductsArray.isEmpty
+            let isExactMatch =  suggestedProductsArray.first != productName
+            
+            return hasInput && hasSuggestions && isExactMatch
+        }
+        
         private let isEditing: Bool
         
         var isFormValid: Bool {
@@ -171,8 +222,9 @@ extension ProductFormView {
             isCreating ? String(localized: "Создание товара") : String(localized: "Редактирование товара")
         }
         
-        init(config: FormConfig) {
+        init(config: FormConfig, suggestionService: ProductSuggestionProtocol = ProductSuggestionService()) {
             self.isEditing = config.product != nil
+            self.suggestionService = suggestionService
             
             if let product = config.product {
                 self.productName = product.name
@@ -188,10 +240,20 @@ extension ProductFormView {
             productName = ""
             unitPickerSelection = .pieces
             isMenuShowing = false
+            suggestedProductsArray = []
         }
         
         func showMenu() {
             isMenuShowing = true
+        }
+        
+        func findSuggestions(for searchText: String) {
+            suggestedProductsArray = suggestionService.findSuggestion(in: searchText)
+        }
+        
+        func setNewProduct(name: String) {
+            productName = name
+            suggestedProductsArray = []
         }
     }
 }
@@ -221,4 +283,3 @@ extension ProductFormView {
     }
     return PreviewWrapper()
 }
-

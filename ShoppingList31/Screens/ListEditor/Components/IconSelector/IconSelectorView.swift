@@ -57,6 +57,6 @@ struct IconSelectorView: View {
     @Previewable @State var icon: Icon?
     
     IconSelectorView(color: .green, selectedIcon: $icon)
-    .padding()
-    .background(.yellow)
+        .padding()
+        .background(.yellow)
 }

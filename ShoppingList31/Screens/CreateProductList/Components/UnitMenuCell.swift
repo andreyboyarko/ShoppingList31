@@ -71,7 +71,7 @@ struct UnitMenuCell: View {
             )
             .frame(width: 220, height: 50)
             .background(Color.white)
-
+            
             UnitMenuCell(
                 menuElement: .kilogram,
                 showsSeparator: false,

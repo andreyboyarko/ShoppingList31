@@ -50,7 +50,7 @@ struct ListCell: View {
         completed: 10,
         total: 20
     )
-
+    
     ListCell(listItem: item)
         .padding(.top, 10)
         .background(Color(.yellow))
