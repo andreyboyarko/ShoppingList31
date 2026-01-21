@@ -5,6 +5,7 @@
 //  Created by Волошин Александр on 1/8/26.
 //
 import SwiftUI
+import SwiftData
 
 struct ListCell: View {
     
@@ -42,13 +43,45 @@ struct ListCell: View {
 }
 
 #Preview {
-    ListCell(listItem: ListItem.mock)
+    let item = ListItem(
+        color: .blue,
+        icon: .calendarNumber,
+        title: "Новый год",
+        completed: 10,
+        total: 20
+    )
+
+    ListCell(listItem: item)
         .padding(.top, 10)
         .background(Color(.yellow))
 }
 
 #Preview {
-    ForEach(ListItem.mockArray, id: \.id) { item in
+    let items = [
+        ListItem(
+            color: IconColor.blue,
+            icon: Icon.calendarNumber,
+            title: "Новый год",
+            completed: 10,
+            total: 20
+        ),
+        ListItem(
+            color: IconColor.green,
+            icon: Icon.paw,
+            title: "Кошке",
+            completed: 1,
+            total: 4
+        ),
+        ListItem(
+            color: IconColor.yellow,
+            icon: Icon.gameController,
+            title: "Вечеринка малого",
+            completed: 9,
+            total: 20
+        )
+    ]
+    
+    ForEach(items, id: \.id) { item in
         ListCell(listItem: item)
     }
 }

@@ -6,25 +6,50 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShoppingItemList: View {
-    
     let listId: UUID
-    let navigationTitle: String
-    @State private var searchText = ""
-    @State private var shoppingItems: [ShoppingItem]
     
+    var navigationTitle: String {
+        shoppingLists.first?.title ?? ""
+    }
+    
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Environment(Router.self) private var router
     
-    init(
-        listId: UUID,
-        shoppingItems: [ShoppingItem] = ShoppingItem.mockArray) {
-            self.listId = listId
-            let item = ListItem.mockArray.first { $0.id == listId }
-            ?? ListItem.mockArray.first!
-            self.navigationTitle = item.title
-            _shoppingItems = State(initialValue: shoppingItems)
+    @State private var searchText = ""
+    @State private var formConfig: FormConfig?
+    @State private var isAlphabeticalSortEnabled = false
+    @State private var isSharePresented = false
+    
+    @Query private var shoppingItems: [ShoppingItem]
+    @Query private var shoppingLists: [ListItem]
+    
+    private var visibleItems: [ShoppingItem] {
+        let filtered = searchText.isEmpty
+            ? shoppingItems
+            : shoppingItems.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+
+        if isAlphabeticalSortEnabled {
+            return filtered.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        } else {
+            return filtered
         }
+    }
+    
+    init(listId: UUID) {
+        self.listId = listId
+        _shoppingLists = Query(filter: #Predicate<ListItem> { $0.id == listId })
+        _shoppingItems = Query(
+            filter: #Predicate<ShoppingItem> { $0.list?.id == listId }
+        )
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -35,14 +60,16 @@ struct ShoppingItemList: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
-                    ForEach(shoppingItems) { item in
-                        ShoppingCell(shoppingItem: item)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets())
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                deleteButton(for: item)
-                                editButton(for: item)
-                            }
+                    ForEach(visibleItems) { item in
+                        if let list = shoppingLists.first {
+                            ShoppingCell(list: list, shoppingItem: item)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets())
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    deleteButton(for: item)
+                                    editButton(for: item)
+                                }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -61,6 +88,19 @@ struct ShoppingItemList: View {
         .backButtonWith(title: navigationTitle) {
             router.pop()
         }
+        .sheet(item: $formConfig) { config in
+            ProductFormView(config: config)
+        }
+        .sheet(isPresented: $isSharePresented) {
+            ShareLink(
+                item: shoppingItems.shareText,
+                subject: Text("Список покупок")
+            ) {
+                Label("Поделиться", systemImage: "square.and.arrow.up")
+                    .font(.headline)
+                    .padding()
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
@@ -70,11 +110,17 @@ struct ShoppingItemList: View {
                         Label(ShoppingItemListText.menuSortAlphabetically, systemImage: "arrow.up.arrow.down")
                     }
                     
-                    Button {
-                        shareList()
-                    } label: {
-                        Label(ShoppingItemListText.menuShare, systemImage: "square.and.arrow.up")
+                    ShareLink(
+                        item: shoppingItems.shareText,
+                        preview: SharePreview("Список покупок: \(shoppingLists.first?.title ?? "-")")
+                    ) {
+                        Label(
+                            ShoppingItemListText.menuShare,
+                            systemImage: "square.and.arrow.up"
+                        )
                     }
+                    .disabled(shoppingItems.isEmpty)
+                    
                     Button {
                         uncheckAll()
                     } label: {
@@ -142,31 +188,47 @@ struct ShoppingItemList: View {
     }
     
     private func sortAlphabetically() {
-        print("Сортировать по алфавиту")
-    }
-    
-    private func shareList() {
-        print("Поделиться")
+        isAlphabeticalSortEnabled.toggle()
     }
     
     private func uncheckAll() {
-        print("Снять отметки со всех товаров")
+        shoppingItems.forEach { item in
+            if item.isPurchased {
+                item.isPurchased = false
+            }
+        }
     }
     
     private func deletePurchased() {
-        print("Удалить купленные товары")
+        guard let list = shoppingLists.first else { return }
+        
+        shoppingItems.forEach { item in
+            if item.isPurchased {
+                context.delete(item)
+                list.completed -= 1
+                list.total -= 1
+            }
+        }
     }
     
     private func editItem(_ item: ShoppingItem) {
-        print("Редактировать: \(item.name)")
+        formConfig = FormConfig(product: item)
     }
     
     private func deleteItem(_ item: ShoppingItem) {
-        print("Удалить: \(item.name)")
+        context.delete(item)
+        
+        guard let list = shoppingLists.first else { return }
+        
+        list.total -= 1
+        if item.isPurchased {
+            list.completed -= 1
+        }
     }
     
     private func addItem() {
-        print("Добавить товар")
+        guard let list = shoppingLists.first else { return }
+        formConfig = FormConfig(list: list)
     }
 }
 
@@ -182,12 +244,6 @@ enum ShoppingItemListText {
 #Preview {
     NavigationStack {
         ShoppingItemList(listId: UUID())
-    }
-    .environment(Router())
-}
-#Preview("Empty List") {
-    NavigationStack {
-        ShoppingItemList(listId: UUID(), shoppingItems: [])
     }
     .environment(Router())
 }

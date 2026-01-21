@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ShoppingList31App: App {
@@ -21,13 +22,14 @@ struct ShoppingList31App: App {
     var body: some Scene {
         WindowGroup {
             if didShowOnboarding {
-                MainScreen(lists: ListItem.mockArray)
+                MainScreen()
                     .withRouter()
                     .onChange(of: themeStore.theme, { _, newValue in
                         storedTheme = newValue
                     })
                     .preferredColorScheme(colorScheme(for: themeStore.theme))
                     .environment(themeStore)
+                    .modelContainer(for: [ListItem.self, ShoppingItem.self])
             } else {
                 WelcomeView {
                     didShowOnboarding = true
@@ -44,5 +46,6 @@ extension ShoppingList31App {
         case .light:  return .light
         case .dark:   return .dark
         }
+        
     }
 }
