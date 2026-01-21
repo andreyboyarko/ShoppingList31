@@ -71,7 +71,6 @@ struct ProductFormView: View {
                       let list = config.list
                 else { return }
                 
-                
                 let item = ShoppingItem(
                     name: observed.productName,
                     count: count,
@@ -168,7 +167,7 @@ extension ProductFormView {
         var isCreating: Bool { !isEditing }
         
         var navigationTitle: String {
-            isCreating ? "Создание товара" : "Редактирование товара"
+            isCreating ? "Создание товара" : "Редактировать"
         }
         
         init(config: FormConfig) {
@@ -221,4 +220,3 @@ extension ProductFormView {
     }
     return PreviewWrapper()
 }
-
