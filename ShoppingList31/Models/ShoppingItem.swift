@@ -26,3 +26,9 @@ final class ShoppingItem: Identifiable {
         self.listId = listId
     }
 }
+
+extension Array where Element == ShoppingItem {
+    var shareText: String {
+        map { "\($0.name) - \($0.count) \($0.unit)" }.joined(separator: "\n")
+    }
+}

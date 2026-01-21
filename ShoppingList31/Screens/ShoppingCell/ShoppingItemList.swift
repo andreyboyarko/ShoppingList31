@@ -22,6 +22,7 @@ struct ShoppingItemList: View {
     @State private var searchText = ""
     @State private var formConfig: FormConfig?
     @State private var isAlphabeticalSortEnabled = false
+    @State private var isSharePresented = false
     
     @Query private var shoppingItems: [ShoppingItem]
     @Query private var shoppingLists: [ListItem]
@@ -90,6 +91,16 @@ struct ShoppingItemList: View {
         .sheet(item: $formConfig) { config in
             ProductFormView(config: config)
         }
+        .sheet(isPresented: $isSharePresented) {
+            ShareLink(
+                item: shoppingItems.shareText,
+                subject: Text("Список покупок")
+            ) {
+                Label("Поделиться", systemImage: "square.and.arrow.up")
+                    .font(.headline)
+                    .padding()
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
@@ -99,11 +110,17 @@ struct ShoppingItemList: View {
                         Label(ShoppingItemListText.menuSortAlphabetically, systemImage: "arrow.up.arrow.down")
                     }
                     
-                    Button {
-                        shareList()
-                    } label: {
-                        Label(ShoppingItemListText.menuShare, systemImage: "square.and.arrow.up")
+                    ShareLink(
+                        item: shoppingItems.shareText,
+                        preview: SharePreview("Список покупок: \(shoppingLists.first?.title ?? "-")")
+                    ) {
+                        Label(
+                            ShoppingItemListText.menuShare,
+                            systemImage: "square.and.arrow.up"
+                        )
                     }
+                    .disabled(shoppingItems.isEmpty)
+                    
                     Button {
                         uncheckAll()
                     } label: {
@@ -172,10 +189,6 @@ struct ShoppingItemList: View {
     
     private func sortAlphabetically() {
         isAlphabeticalSortEnabled.toggle()
-    }
-    
-    private func shareList() {
-        print("Поделиться")
     }
     
     private func uncheckAll() {
