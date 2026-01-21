@@ -5,28 +5,46 @@
 //  Created by Волошин Александр on 1/13/26.
 //
 import SwiftUI
+import SwiftData
 
 struct MainScreen: View {
-    
+    @Environment(\.modelContext) private var context
     @Environment(ThemeStore.self) var themeStore
     @Environment(Router.self) private var router
-    @State var lists: [ListItem]
+    
+    @Query(sort: \ListItem.createdAt, order: .reverse)
+    private var lists: [ListItem]
+    
+    @State private var isAlphabeticalSortEnabled = false
+    
+    private var visibleLists: [ListItem] {
+        if isAlphabeticalSortEnabled {
+            return lists.sorted {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        } else {
+            return lists
+        }
+    }
+
     
     var body: some View {
-        VStack {
-            screenTitle
-            if lists.isEmpty {
-                EmptyStateView(viewState: .createShoppingList)
-                    .padding(.top, 88)
-                Spacer()
-            } else {
-                mainList
+        NavigationStack {
+            VStack {
+                screenTitle
+                if lists.isEmpty {
+                    EmptyStateView(viewState: .createShoppingList)
+                        .padding(.top, 88)
+                    Spacer()
+                } else {
+                    mainList
+                }
             }
-        }
-        .background(.appBackground)
-        .safeAreaInset(edge: .bottom) {
-            ActionButton(title: "Создать список", isActive: true) {
-                router.push(.createList)
+            .background(.appBackground)
+            .safeAreaInset(edge: .bottom) {
+                ActionButton(title: "Создать список", isActive: true) {
+                    router.push(.createList)
+                }
             }
         }
     }
@@ -37,13 +55,12 @@ struct MainScreen: View {
                 ForEach(AppTheme.allCases, id: \.self) { theme in
                     themeButton(theme)
                 }
-                
             } label: {
                 Label("Установить тему", systemImage: "circle.lefthalf.filled.inverse")
             }
             
             Button {
-                
+                isAlphabeticalSortEnabled.toggle()
             } label: {
                 Label("Сортировка по Алфавиту", systemImage: "arrow.up.arrow.down")
             }
@@ -81,38 +98,54 @@ struct MainScreen: View {
     
     private var mainList: some View {
         List {
-            ForEach(lists.indices, id: \.self) { index in
+            ForEach(visibleLists) { list in
                 SwipeRow(
                     actions: [
                         SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
-                            router.push(.editList(lists[index].id))
+                            router.push(.editList(list.id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
-                            // копировать / что нужно
+                            let newListTitle = "\(list.title) 2"
+                            let newList = ListItem(
+                                color: list.color,
+                                icon: list.icon,
+                                title: newListTitle,
+                                completed: list.completed,
+                                total: list.total
+                            )
+                            
+                            newList.items = list.items.map {
+                                ShoppingItem(
+                                    name: $0.name,
+                                    count: $0.count,
+                                    unit: $0.unit,
+                                    isSelected: $0.isPurchased,
+                                    list: newList
+                                )
+                            }
+                            context.insert(newList)
                         },
                         SwipeAction(systemImage: "trash", tint: .swipeActionIRed) {
-                            // удалить
+                            context.delete(list)
                         }
                     ]
                 ) {
-                    ListCell(listItem: lists[index])
+                    ListCell(listItem: list)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            router.push(.items(lists[index].id))
+                            router.push(.items(list.id))
                         }
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .listRowBackground(Color.appBackground)
                 
-                if index < lists.count - 1 {
-                    Rectangle()
-                        .fill(.appBackground)
-                        .frame(height: 12)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .listRowBackground(Color.appBackground)
-                }
+                Rectangle()
+                    .fill(.appBackground)
+                    .frame(height: 12)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .listRowBackground(Color.appBackground)
             }
         }
         .listStyle(.plain)
@@ -125,16 +158,6 @@ struct MainScreen: View {
 }
 
 
-#Preview("Списки есть") {
-    let store = ThemeStore()
-    MainScreen(lists: ListItem.mockArray)
-        .environment(Router())
-        .environment(store)
-}
-
-#Preview("Списков нет") {
-    let store = ThemeStore()
-    MainScreen(lists: [])
-        .environment(Router())
-        .environment(store)
+#Preview {
+    MainScreen()
 }

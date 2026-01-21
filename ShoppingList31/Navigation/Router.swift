@@ -39,7 +39,7 @@ struct RouterViewModifier: ViewModifier {
     private func routeScreen(for screen: Screen) -> some View {
         Group {
             switch screen {
-            case .lists: MainScreen(lists: ListItem.mockArray)
+            case .lists: MainScreen()
             case .createList: ListEditorView(mode: .create)
             case .editList(let id): ListEditorView(mode: .edit(id: id))
             case .items(let id): ShoppingItemList(listId: id)

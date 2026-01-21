@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ShoppingCell: View {
-    
+    let list: ListItem
     let shoppingItem: ShoppingItem
-    @State var shoppingItemStatus: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -25,9 +24,13 @@ struct ShoppingCell: View {
             separator
         }
         .background(Color.appBackground)
-        .onAppear {
-            shoppingItemStatus = shoppingItem.isPurchased
-        }
+        .onChange(of: shoppingItem.isPurchased, { _, newValue in
+            if newValue == true {
+                list.completed += 1
+            } else {
+                list.completed -= 1
+            }
+        })
     }
     
     private var separator: some View {
@@ -40,38 +43,69 @@ struct ShoppingCell: View {
     private var nameOfItem: some View {
         Text(shoppingItem.name)
             .font(.body)
-            .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
+            .foregroundStyle(shoppingItem.isPurchased ? .textGrayList : .textSecondary)
     }
     
     private var countItem: some View {
         Text("\(shoppingItem.count) \(shoppingItem.unit).")
             .font(.body)
-            .foregroundStyle(shoppingItemStatus ? .textGrayList : .textSecondary)
+            .foregroundStyle(shoppingItem.isPurchased ? .textGrayList : .textSecondary)
     }
     
     private var selectedIcon: some View {
-            Image(systemName: shoppingItemStatus ? "checkmark.square.fill" : "square")
+            Image(systemName: shoppingItem.isPurchased ? "checkmark.square.fill" : "square")
                 .resizable()
                 .frame(width: 22, height: 22)
                 .foregroundStyle(
-                    shoppingItemStatus
+                    shoppingItem.isPurchased
                     ? .turquoise
                     : .textGrayList
                 )
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    shoppingItemStatus.toggle()
+                    shoppingItem.isPurchased.toggle()
                 }
         }
 }
 
 #Preview {
-    ShoppingCell(shoppingItem: ShoppingItem.mock)
+    let list = ListItem(
+        color: IconColor.green,
+        icon: Icon.paw,
+        title: "Кошке",
+        completed: 1,
+        total: 4
+    )
+    
+    let mock = ShoppingItem(
+        name: "Молоко",
+        count: 2,
+        unit: "л",
+        isSelected: true,
+        list: list
+    )
+    
+    ShoppingCell(list: list, shoppingItem: mock)
 }
 
 #Preview {
-    ForEach(ShoppingItem.mockArray, id: \.id) { item in
-        ShoppingCell(shoppingItem: item)
+    let list = ListItem(
+        color: IconColor.green,
+        icon: Icon.paw,
+        title: "Кошке",
+        completed: 1,
+        total: 4
+    )
+    let mockArray = [
+        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false, list: list),
+        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true, list: list),
+        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false, list: list),
+        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true, list: list),
+        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false, list: list)
+    ]
+    
+    ForEach(mockArray, id: \.id) { item in
+        ShoppingCell(list: list, shoppingItem: item)
     }
 }

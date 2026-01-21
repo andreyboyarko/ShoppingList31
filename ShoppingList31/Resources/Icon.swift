@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Icon: String, CaseIterable, Identifiable {
+enum Icon: String, CaseIterable, Identifiable, Codable {
     case snow, airplane, alert,
          balloon, bandage, barbell,
          bed, briefcase, build,
