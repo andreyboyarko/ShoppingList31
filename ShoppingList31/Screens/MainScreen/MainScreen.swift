@@ -26,7 +26,8 @@ struct MainScreen: View {
         .background(.appBackground)
         .safeAreaInset(edge: .bottom) {
             ActionButton(title: String(localized: "Создать список"), isActive: true) {
-                router.push(.createList) 
+                router.push(.createList)
+            }
         }
     }
     
@@ -122,7 +123,6 @@ struct MainScreen: View {
         .padding(.top, 12)
     }
 }
-
 
 #Preview("Списки есть") {
     let store = ThemeStore()
