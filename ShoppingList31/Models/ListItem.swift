@@ -15,12 +15,15 @@ final class ListItem {
     var title: String
     var completed: Int
     var total: Int
+    @Relationship(deleteRule: .cascade)
+    var items: [ShoppingItem] = []
     
-    init (color: IconColor, icon: Icon, title: String, completed: Int, total: Int) {
+    init (color: IconColor, icon: Icon, title: String, completed: Int, total: Int, items: [ShoppingItem] = []) {
         self.color = color
         self.icon = icon
         self.title = title
         self.completed = completed
         self.total = total
+        self.items = items
     }
 }

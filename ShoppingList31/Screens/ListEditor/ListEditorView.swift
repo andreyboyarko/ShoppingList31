@@ -141,8 +141,14 @@ struct ListEditorView: View {
     }
     
     private func saveList() {
-        guard let item = items.first else { return }
+        guard let item = items.first,
+              let icon = selectedIcon,
+              let color = selectedColor
+        else { return }
+        
         item.title = name
+        item.color = color
+        item.icon = icon
         router.pop()
     }
 }

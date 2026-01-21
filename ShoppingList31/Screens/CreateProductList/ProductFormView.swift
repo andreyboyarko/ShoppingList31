@@ -68,7 +68,7 @@ struct ProductFormView: View {
         Button("Готово") {
             if observed.isCreating {
                 guard let count = Int(observed.productCount),
-                      let listId = config.list?.id
+                      let list = config.list
                 else { return }
                 
                 
@@ -76,7 +76,7 @@ struct ProductFormView: View {
                     name: observed.productName,
                     count: count,
                     unit: observed.selectedUnit,
-                    listId: listId)
+                    list: list)
                 
                 context.insert(item)
                 
@@ -210,7 +210,7 @@ extension ProductFormView {
                         formConfig = FormConfig(list: item)
                     }
                     Button("Редактировать молоко") {
-                        formConfig = FormConfig(product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue, listId: UUID()))
+                        formConfig = FormConfig(product: ShoppingItem(name: "Молоко", count: 2, unit: UnitsProduct.liter.rawValue, list: item))
                     }
                 }
             }

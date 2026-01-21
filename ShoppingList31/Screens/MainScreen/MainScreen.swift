@@ -104,14 +104,24 @@ struct MainScreen: View {
                             router.push(.editList(list.id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
-                            let item = ListItem(
+                            let newList = ListItem(
                                 color: list.color,
                                 icon: list.icon,
                                 title: list.title,
-                                completed: 0,
-                                total: 0)
+                                completed: list.completed,
+                                total: list.total
+                            )
                             
-                            context.insert(item)
+                            newList.items = list.items.map {
+                                ShoppingItem(
+                                    name: $0.name,
+                                    count: $0.count,
+                                    unit: $0.unit,
+                                    isSelected: $0.isPurchased,
+                                    list: newList
+                                )
+                            }
+                            context.insert(newList)
                         },
                         SwipeAction(systemImage: "trash", tint: .swipeActionIRed) {
                             context.delete(list)

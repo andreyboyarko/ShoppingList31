@@ -47,7 +47,7 @@ struct ShoppingItemList: View {
         self.listId = listId
         _shoppingLists = Query(filter: #Predicate<ListItem> { $0.id == listId })
         _shoppingItems = Query(
-            filter: #Predicate<ShoppingItem> { $0.listId == listId }
+            filter: #Predicate<ShoppingItem> { $0.list?.id == listId }
         )
     }
     

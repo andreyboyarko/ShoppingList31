@@ -70,35 +70,26 @@ struct ShoppingCell: View {
 }
 
 #Preview {
-    let mock = ShoppingItem(
-        name: "Молоко",
-        count: 2,
-        unit: "л",
-        isSelected: true,
-        listId: UUID()
-        
-    )
-    
     let list = ListItem(
         color: IconColor.green,
         icon: Icon.paw,
         title: "Кошке",
         completed: 1,
         total: 4
+    )
+    
+    let mock = ShoppingItem(
+        name: "Молоко",
+        count: 2,
+        unit: "л",
+        isSelected: true,
+        list: list
     )
     
     ShoppingCell(list: list, shoppingItem: mock)
 }
 
 #Preview {
-    let mockArray = [
-        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false, listId: UUID()),
-        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true, listId: UUID()),
-        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false, listId: UUID()),
-        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true, listId: UUID()),
-        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false, listId: UUID())
-    ]
-    
     let list = ListItem(
         color: IconColor.green,
         icon: Icon.paw,
@@ -106,6 +97,13 @@ struct ShoppingCell: View {
         completed: 1,
         total: 4
     )
+    let mockArray = [
+        ShoppingItem(name: "Хлеб", count: 1, unit: "шт", isSelected: false, list: list),
+        ShoppingItem(name: "Яйца", count: 10, unit: "шт", isSelected: true, list: list),
+        ShoppingItem(name: "Сыр", count: 1, unit: "кг", isSelected: false, list: list),
+        ShoppingItem(name: "Кофе", count: 1, unit: "кг", isSelected: true, list: list),
+        ShoppingItem(name: "Фрукты", count: 5, unit: "кг", isSelected: false, list: list)
+    ]
     
     ForEach(mockArray, id: \.id) { item in
         ShoppingCell(list: list, shoppingItem: item)
