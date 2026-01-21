@@ -105,10 +105,11 @@ struct MainScreen: View {
                             router.push(.editList(list.id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
+                            let newListTitle = "\(list.title) 2"
                             let newList = ListItem(
                                 color: list.color,
                                 icon: list.icon,
-                                title: list.title,
+                                title: newListTitle,
                                 completed: list.completed,
                                 total: list.total
                             )
