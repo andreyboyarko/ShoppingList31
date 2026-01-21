@@ -17,10 +17,10 @@ struct UnitSelectionMenu: View {
         VStack(spacing: 0) {
             ForEach(UnitsProduct.allCases) { element in
                 UnitMenuCell(menuElement: element,
-                         showsSeparator: element != UnitsProduct.allCases.last,
-                         isMenuVisible: $needShowMenu,
-                         selectedUnit: $selectedUnit,
-                         unitSelection: $pikerUnitName
+                             showsSeparator: element != UnitsProduct.allCases.last,
+                             isMenuVisible: $needShowMenu,
+                             selectedUnit: $selectedUnit,
+                             unitSelection: $pikerUnitName
                 )
             }
         }

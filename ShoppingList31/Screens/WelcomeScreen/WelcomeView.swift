@@ -9,18 +9,18 @@ import SwiftUI
 
 struct WelcomeView: View {
     let onStart: () -> Void
-
+    
     var body: some View {
         ZStack {
             background
-
+            
             VStack(spacing: 48) {
                 welcomeText
                 image
                 descriptionText
-
+                
                 Spacer()
-
+                
                 ActionButton(
                     title: Phrases.start,
                     isActive: true,
@@ -30,20 +30,20 @@ struct WelcomeView: View {
             .padding(.top, 40)
         }
     }
-
+    
     private var welcomeText: some View {
         Text(Phrases.welcome)
             .font(.largeTitle)
             .foregroundStyle(.textPrimary)
     }
-
+    
     private var image: some View {
         Image(.amico)
             .resizable()
             .scaledToFit()
             .padding(.horizontal, 49)
     }
-
+    
     private var descriptionText: some View {
         VStack(spacing: 12) {
             Text(Phrases.message1)
@@ -55,12 +55,12 @@ struct WelcomeView: View {
         .padding(.horizontal, 16)
         .foregroundStyle(.textSecondary)
     }
-
+    
     private var background: some View {
         Color.appBackground
             .ignoresSafeArea()
     }
-
+    
     enum Phrases {
         static let welcome = "Добро пожаловать!"
         static let message1 = "Никогда не забывайте, что нужно купить"

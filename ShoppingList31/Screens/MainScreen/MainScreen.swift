@@ -26,7 +26,7 @@ struct MainScreen: View {
             return lists
         }
     }
-
+    
     
     var body: some View {
         NavigationStack {
@@ -66,9 +66,12 @@ struct MainScreen: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
-                .font(.system(size: 19))
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
                 .foregroundStyle(.textPrimary)
                 .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
     }
     
@@ -156,7 +159,6 @@ struct MainScreen: View {
         .padding(.top, 12)
     }
 }
-
 
 #Preview {
     MainScreen()

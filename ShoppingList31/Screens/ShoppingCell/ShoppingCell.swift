@@ -53,20 +53,20 @@ struct ShoppingCell: View {
     }
     
     private var selectedIcon: some View {
-            Image(systemName: shoppingItem.isPurchased ? "checkmark.square.fill" : "square")
-                .resizable()
-                .frame(width: 22, height: 22)
-                .foregroundStyle(
-                    shoppingItem.isPurchased
-                    ? .turquoise
-                    : .textGrayList
-                )
-                .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    shoppingItem.isPurchased.toggle()
-                }
-        }
+        Image(systemName: shoppingItem.isPurchased ? "checkmark.square.fill" : "square")
+            .resizable()
+            .frame(width: 22, height: 22)
+            .foregroundStyle(
+                shoppingItem.isPurchased
+                ? .turquoise
+                : .textGrayList
+            )
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                shoppingItem.isPurchased.toggle()
+            }
+    }
 }
 
 #Preview {
