@@ -154,10 +154,14 @@ struct ProductFormView: View {
     }
     
     private var unitSelectionField: some View {
-        NameTextField(
-            placeholder: observed.isCreating  ? "Ед.Изм.:" : "",
-            text: $observed.selectedUnit
-        )
+        let placeholder = observed.isCreating
+                ? String(localized: "Ед.Изм.:")
+                : String(localized: "Ед.Изм.:") + " \(observed.unitPickerSelection.localizedName)"
+            
+            return NameTextField(
+                placeholder: placeholder,
+                text: .constant("")
+            )
         .disabled(true)
         .overlay(
             customPicker
@@ -189,6 +193,10 @@ extension ProductFormView {
         var selectedUnit: String = ""
         var unitPickerSelection: UnitsProduct = .pieces
         var isMenuShowing: Bool = false
+        
+        var localizedSelectedUnit: String {
+            UnitsProduct(rawValue: selectedUnit)?.localizedName ?? selectedUnit
+        }
         
         private let suggestionService: ProductSuggestionProtocol
         var suggestedProductsArray: [String] = []

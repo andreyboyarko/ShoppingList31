@@ -47,7 +47,9 @@ struct ShoppingCell: View {
     }
     
     private var countItem: some View {
-        Text("\(shoppingItem.count) \(shoppingItem.unit).")
+        let localizedUnit = UnitsProduct(rawValue: shoppingItem.unit)?.localizedName ?? shoppingItem.unit
+        
+        return Text("\(shoppingItem.count) \(localizedUnit).")
             .font(.body)
             .foregroundStyle(shoppingItem.isPurchased ? .textGrayList : .textSecondary)
     }

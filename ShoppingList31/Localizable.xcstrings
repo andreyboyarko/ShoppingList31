@@ -40,9 +40,6 @@
         }
       }
     },
-    "Hello, world!" : {
-
-    },
     "Введите название списка" : {
       "localizations" : {
         "en" : {
@@ -120,6 +117,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome!"
+          }
+        }
+      }
+    },
+    "Ед.Изм.:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unit:"
           }
         }
       }
@@ -368,6 +375,12 @@
           }
         }
       }
+    },
+    "Список покупок" : {
+
+    },
+    "Список покупок: %@" : {
+
     },
     "Темная" : {
       "extractionState" : "manual",
