@@ -9,8 +9,9 @@ import SwiftUI
 struct MainScreen: View {
     
     @Environment(ThemeStore.self) var themeStore
+    @Environment(Router.self) private var router
     @State var lists: [ListItem]
-
+    
     var body: some View {
         VStack {
             screenTitle
@@ -25,8 +26,7 @@ struct MainScreen: View {
         .background(.appBackground)
         .safeAreaInset(edge: .bottom) {
             ActionButton(title: String(localized: "Создать список"), isActive: true) {
-                print("Pushed button")
-            }
+                router.push(.createList) 
         }
     }
     
@@ -84,7 +84,7 @@ struct MainScreen: View {
                 SwipeRow(
                     actions: [
                         SwipeAction(systemImage: "square.and.pencil", tint: .swipeActionIGray) {
-                            // редактировать
+                            router.push(.editList(lists[index].id))
                         },
                         SwipeAction(systemImage: "plus.square.on.square", tint: .swipeActionIOrange) {
                             // копировать / что нужно
@@ -95,6 +95,10 @@ struct MainScreen: View {
                     ]
                 ) {
                     ListCell(listItem: lists[index])
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            router.push(.items(lists[index].id))
+                        }
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -119,16 +123,17 @@ struct MainScreen: View {
     }
 }
 
-#Preview {
+
+#Preview("Списки есть") {
     let store = ThemeStore()
-    
     MainScreen(lists: ListItem.mockArray)
+        .environment(Router())
         .environment(store)
 }
 
-#Preview {
+#Preview("Списков нет") {
     let store = ThemeStore()
-    
     MainScreen(lists: [])
+        .environment(Router())
         .environment(store)
 }
