@@ -12,7 +12,8 @@ struct MainScreen: View {
     @Environment(ThemeStore.self) var themeStore
     @Environment(Router.self) private var router
     
-    @Query private var lists: [ListItem]
+    @Query(sort: \ListItem.createdAt, order: .reverse)
+    private var lists: [ListItem]
     
     @State private var isAlphabeticalSortEnabled = false
     

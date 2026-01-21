@@ -17,6 +17,7 @@ final class ListItem {
     var total: Int
     @Relationship(deleteRule: .cascade)
     var items: [ShoppingItem] = []
+    var createdAt: Date = Date()
     
     init (color: IconColor, icon: Icon, title: String, completed: Int, total: Int, items: [ShoppingItem] = []) {
         self.color = color
