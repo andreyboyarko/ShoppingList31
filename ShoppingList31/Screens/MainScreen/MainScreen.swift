@@ -139,14 +139,12 @@ struct MainScreen: View {
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .listRowBackground(Color.appBackground)
                 
-                if (lists.firstIndex(of: list) ?? 0) + 1 < lists.count {
-                    Rectangle()
-                        .fill(.appBackground)
-                        .frame(height: 12)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .listRowBackground(Color.appBackground)
-                }
+                Rectangle()
+                    .fill(.appBackground)
+                    .frame(height: 12)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .listRowBackground(Color.appBackground)
             }
         }
         .listStyle(.plain)
