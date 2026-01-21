@@ -94,9 +94,9 @@ struct ShoppingItemList: View {
         .sheet(isPresented: $isSharePresented) {
             ShareLink(
                 item: shoppingItems.shareText,
-                subject: Text("Список покупок")
+                subject: Text(String(localized: "Список покупок"))
             ) {
-                Label("Поделиться", systemImage: "square.and.arrow.up")
+                Label(String(localized: "Поделиться"), systemImage: "square.and.arrow.up")
                     .font(.headline)
                     .padding()
             }
@@ -112,7 +112,7 @@ struct ShoppingItemList: View {
                     
                     ShareLink(
                         item: shoppingItems.shareText,
-                        preview: SharePreview("Список покупок: \(shoppingLists.first?.title ?? "-")")
+                        preview: SharePreview(String(localized: "Список покупок: \(shoppingLists.first?.title ?? "-")"))
                     ) {
                         Label(
                             ShoppingItemListText.menuShare,

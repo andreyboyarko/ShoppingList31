@@ -377,10 +377,24 @@
       }
     },
     "Список покупок" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping list"
+          }
+        }
+      }
     },
     "Список покупок: %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping list: %@"
+          }
+        }
+      }
     },
     "Темная" : {
       "extractionState" : "manual",
@@ -420,6 +434,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "pcs"
+          }
+        }
+      }
+    },
+    "Это название уже используется, пожалуйста, измените его." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This name is already in use, please change it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это название уже используется, пожалуйста, измените его."
+          }
+        }
+      }
+    },
+    "Этот товар уже есть в списке, добавьте другой" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item is already in the list, add another one"
           }
         }
       }

@@ -28,6 +28,9 @@ final class ShoppingItem: Identifiable {
 
 extension Array where Element == ShoppingItem {
     var shareText: String {
-        map { "\($0.name) - \($0.count) \($0.unit)" }.joined(separator: "\n")
+        map {
+            let unit = UnitsProduct(rawValue: $0.unit)?.localizedName ?? $0.unit
+            return "\($0.name) - \($0.count) \(unit)"
+        }.joined(separator: "\n")
     }
 }
