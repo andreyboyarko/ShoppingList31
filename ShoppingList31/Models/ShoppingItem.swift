@@ -16,6 +16,7 @@ final class ShoppingItem: Identifiable {
     var unit: String
     var isPurchased: Bool
     var list: ListItem?
+    var createdAt: Date = Date()
     
     init(name: String, count: Int, unit: String, isSelected: Bool = false, list: ListItem) {
         self.name = name

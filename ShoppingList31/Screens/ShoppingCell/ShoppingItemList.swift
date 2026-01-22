@@ -23,6 +23,9 @@ struct ShoppingItemList: View {
     @State private var formConfig: FormConfig?
     @State private var isAlphabeticalSortEnabled = false
     @State private var isSharePresented = false
+    @State private var showDeletePurchasedAlert: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    @State private var deleteShoppingItem: ShoppingItem?
     
     @Query private var shoppingItems: [ShoppingItem]
     @Query private var shoppingLists: [ListItem]
@@ -47,7 +50,8 @@ struct ShoppingItemList: View {
         self.listId = listId
         _shoppingLists = Query(filter: #Predicate<ListItem> { $0.id == listId })
         _shoppingItems = Query(
-            filter: #Predicate<ShoppingItem> { $0.list?.id == listId }
+            filter: #Predicate<ShoppingItem> { $0.list?.id == listId },
+            sort: \ShoppingItem.createdAt, order: .reverse
         )
     }
     
@@ -101,6 +105,29 @@ struct ShoppingItemList: View {
                     .padding()
             }
         }
+        .alert("Удаление купленных товаров", isPresented: $showDeletePurchasedAlert, actions: {
+                Button("Отмена", role: .cancel) {}
+                Button("Удалить", role: .destructive) {
+                    deletePurchased()
+                }
+            }, message: {
+                Text("Вы действительно хотите удалить все купленные товары?")
+            })
+        .alert("Удаление товара", isPresented: $showDeleteAlert, actions: {
+            Button("Отмена", role: .cancel) {
+                deleteShoppingItem = nil
+            }
+            Button("Удалить", role: .destructive) {
+                guard let item = deleteShoppingItem else {
+                    return
+                }
+                
+                deleteItem(item)
+                deleteShoppingItem = nil
+            }
+        }, message: {
+            Text("Вы действительно хотите удалить товар?")
+        })
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
@@ -128,7 +155,10 @@ struct ShoppingItemList: View {
                     }
                     
                     Button(role: .destructive) {
-                        deletePurchased()
+                        let purchasedCount = shoppingItems.lazy.filter({ $0.isPurchased }).count
+                        if purchasedCount > 0 {
+                            showDeletePurchasedAlert = true
+                        }
                     } label: {
                         Label(ShoppingItemListText.menuDeletePurchased, systemImage: "trash")
                     }
@@ -181,8 +211,9 @@ struct ShoppingItemList: View {
     }
     
     private func deleteButton(for item: ShoppingItem) -> some View {
-        Button(role: .destructive) {
-            deleteItem(item)
+        Button {
+            deleteShoppingItem = item
+            showDeleteAlert = true
         } label: {
             Image(systemName: "trash")
                 .font(.system(size: 20))
