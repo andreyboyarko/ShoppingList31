@@ -39,6 +39,9 @@ struct ProductFormView: View {
                 
                 HStack(spacing: 16) {
                     quantityField
+                        .onChange(of: observed.productCount) { _, newValue in
+                            observed.productCount = newValue.filter { $0.isNumber }
+                        }
                     unitSelectionField
                 }
                 .padding(.top, 20)
@@ -104,7 +107,7 @@ struct ProductFormView: View {
             }
             
             if observed.isCreating {
-                observed.cleanField()
+//                observed.cleanField()
             }
             dismiss()
         }
@@ -149,27 +152,23 @@ struct ProductFormView: View {
     
     private var quantityField: some View {
         observed.isCreating ?
-        NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.phonePad) :
-        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
+        NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.numberPad) :
+        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.numberPad)
     }
     
     private var unitSelectionField: some View {
-        let placeholder = observed.isCreating
-                ? String(localized: "Ед.Изм.:")
-                : String(localized: "Ед.Изм.:") + " \(observed.unitPickerSelection.localizedName)"
-            
-            return NameTextField(
-                placeholder: placeholder,
+            NameTextField(
+                placeholder: String(localized: "Ед.Изм.:"),
                 text: .constant("")
             )
-        .disabled(true)
-        .overlay(
-            customPicker
-        )
-        .onTapGesture {
-            observed.showMenu()
+            .disabled(true)
+            .overlay(
+                customPicker
+            )
+            .onTapGesture {
+                observed.showMenu()
+            }
         }
-    }
     
     private var customPicker: some View {
         HStack {
@@ -221,7 +220,7 @@ extension ProductFormView {
         }
         
         var isPikerShowing: Bool {
-            selectedUnit.isEmpty || isMenuShowing
+            true
         }
         
         var isCreating: Bool { !isEditing }
