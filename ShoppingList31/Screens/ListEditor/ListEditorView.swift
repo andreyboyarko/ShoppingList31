@@ -16,15 +16,15 @@ struct ListEditorView: View {
         
         var navigationTitle: String {
             switch self {
-            case .create: "Создать список"
-            case .edit:   "Редактировать список"
+            case .create: String(localized: "Создать список")
+            case .edit:   String(localized: "Редактировать список")
             }
         }
         
         var buttonTitle: String {
             switch self {
-            case .create: "Создать"
-            case .edit:   "Сохранить"
+            case .create: String(localized: "Создать")
+            case .edit:   String(localized: "Сохранить")
             }
         }
     }
@@ -98,7 +98,7 @@ struct ListEditorView: View {
     }
     
     private var textField: some View {
-        NameTextField(placeholder: "Введите название списка", text: $name)
+        NameTextField(placeholder: String(localized: "Введите название списка"), text: $name)
     }
     
     private var colorSelector: some View {

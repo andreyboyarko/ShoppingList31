@@ -12,6 +12,10 @@ enum AppTheme: String, CaseIterable {
     case light = "Светлая"
     case dark = "Темная"
     case system = "Системная"
+    
+    var localizedName: String {
+        String(localized: String.LocalizationValue(rawValue))
+    }
 }
 
 @MainActor

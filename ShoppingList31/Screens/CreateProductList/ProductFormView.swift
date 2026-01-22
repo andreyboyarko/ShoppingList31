@@ -54,6 +54,9 @@ struct ProductFormView: View {
                 
                 HStack(spacing: 16) {
                     quantityField
+                        .onChange(of: observed.productCount) { _, newValue in
+                            observed.productCount = newValue.filter { $0.isNumber }
+                        }
                     unitSelectionField
                 }
                 .padding(.top, 20)
@@ -80,7 +83,7 @@ struct ProductFormView: View {
     }
     
     private var cancelButton: some View {
-        Button("Отменить") {
+        Button(String(localized: "Отменить")) {
             dismiss()
         }
         .font(.body)
@@ -116,10 +119,6 @@ struct ProductFormView: View {
                 config.product?.name = observed.productName
                 config.product?.count = count
                 config.product?.unit = observed.selectedUnit
-            }
-            
-            if observed.isCreating {
-                observed.cleanField()
             }
             dismiss()
         }
@@ -186,14 +185,14 @@ struct ProductFormView: View {
 
     private var quantityField: some View {
         observed.isCreating ?
-        NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) :
-        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.phonePad)
+        NameTextField(placeholder: String(localized: "Количество"), text: $observed.productCount).keyboardType(.numberPad) :
+        NameTextField(placeholder: "", text: $observed.productCount).keyboardType(.numberPad)
     }
     
     private var unitSelectionField: some View {
         NameTextField(
-            placeholder: observed.isCreating  ? "Ед.Изм.:" : "",
-            text: $observed.selectedUnit
+            placeholder: observed.isCreating ? String(localized: "Ед.Изм.:") : "",
+            text: observed.isCreating ? .constant("") : .constant(observed.unitPickerSelection.localizedName)
         )
         .disabled(true)
         .overlay(
@@ -207,7 +206,7 @@ struct ProductFormView: View {
     private var customPicker: some View {
         HStack {
             Spacer()
-            Text(observed.unitPickerSelection.rawValue)
+            Text(observed.unitPickerSelection.localizedName)
             Image(systemName: "chevron.up.chevron.down")
         }
         .font(.body)
@@ -223,10 +222,14 @@ extension ProductFormView {
         
         var productName: String = ""
         var productCount: String = ""
-        var selectedUnit: String = ""
+        var selectedUnit: String = UnitsProduct.pieces.rawValue
         var unitPickerSelection: UnitsProduct = .pieces
         var isMenuShowing: Bool = false
         var isDuplicateName: Bool = false
+        
+        var localizedSelectedUnit: String {
+            UnitsProduct(rawValue: selectedUnit)?.localizedName ?? selectedUnit
+        }
         
         private let suggestionService: ProductSuggestionProtocol
         var suggestedProductsArray: [String] = []
@@ -253,13 +256,13 @@ extension ProductFormView {
         }
         
         var isPikerShowing: Bool {
-            selectedUnit.isEmpty || isMenuShowing
+            isCreating
         }
         
         var isCreating: Bool { !isEditing }
         
         var navigationTitle: String {
-            isCreating ? "Создание товара" : "Редактировать"
+            isCreating ? String(localized: "Создание товара") : String(localized: "Редактирование товара")
         }
         
         init(config: FormConfig, suggestionService: ProductSuggestionProtocol = ProductSuggestionService()) {

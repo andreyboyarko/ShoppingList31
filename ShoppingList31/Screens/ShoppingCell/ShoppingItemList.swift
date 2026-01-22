@@ -98,9 +98,9 @@ struct ShoppingItemList: View {
         .sheet(isPresented: $isSharePresented) {
             ShareLink(
                 item: shoppingItems.shareText,
-                subject: Text("Список покупок")
+                subject: Text(String(localized: "Список покупок"))
             ) {
-                Label("Поделиться", systemImage: "square.and.arrow.up")
+                Label(String(localized: "Поделиться"), systemImage: "square.and.arrow.up")
                     .font(.headline)
                     .padding()
             }
@@ -139,7 +139,7 @@ struct ShoppingItemList: View {
                     
                     ShareLink(
                         item: shoppingItems.shareText,
-                        preview: SharePreview("Список покупок: \(shoppingLists.first?.title ?? "-")")
+                        preview: SharePreview(String(localized: "Список покупок: \(shoppingLists.first?.title ?? "-")"))
                     ) {
                         Label(
                             ShoppingItemListText.menuShare,
@@ -267,12 +267,12 @@ struct ShoppingItemList: View {
 }
 
 enum ShoppingItemListText {
-    static let searchPlaceholder = "Поиск"
-    static let menuSortAlphabetically = "Сортировать по алфавиту"
-    static let menuShare = "Поделиться"
-    static let menuUncheckAll = "Снять отметки со всех товаров"
-    static let menuDeletePurchased = "Удалить купленные товары"
-    static let addItemButton = "Добавить товар"
+    static let searchPlaceholder = String(localized: "Поиск")
+    static let menuSortAlphabetically = String(localized: "Сортировать по Алфавиту")
+    static let menuShare = String(localized: "Поделиться")
+    static let menuUncheckAll = String(localized: "Снять отметки со всех товаров")
+    static let menuDeletePurchased = String(localized: "Удалить купленные товары")
+    static let addItemButton = String(localized: "Добавить товар")
 }
 
 #Preview {

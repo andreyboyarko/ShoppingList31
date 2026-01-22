@@ -62,10 +62,10 @@ struct WelcomeView: View {
     }
     
     enum Phrases {
-        static let welcome = "Добро пожаловать!"
-        static let message1 = "Никогда не забывайте, что нужно купить"
-        static let message2 = "Создавайте списки и не переживайте о покупках"
-        static let start = "Начать"
+        static let welcome = String(localized: "Добро пожаловать!")
+        static let message1 = String(localized: "Никогда не забывайте, что нужно купить")
+        static let message2 = String(localized: "Создавайте списки и не переживайте о покупках")
+        static let start = String(localized: "Начать")
     }
 }
 
