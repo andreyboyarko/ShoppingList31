@@ -23,6 +23,9 @@ struct ShoppingItemList: View {
     @State private var formConfig: FormConfig?
     @State private var isAlphabeticalSortEnabled = false
     @State private var isSharePresented = false
+    @State private var showDeletePurchasedAlert: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    @State private var deleteShoppingItem: ShoppingItem?
     
     @Query private var shoppingItems: [ShoppingItem]
     @Query private var shoppingLists: [ListItem]
@@ -102,6 +105,55 @@ struct ShoppingItemList: View {
                     .padding()
             }
         }
+        .alert("Удаление купленных товаров", isPresented: $showDeletePurchasedAlert, actions: {
+            Button(role: .cancel) {
+                
+            } label: {
+                Text("Отмена")
+                    .font(.system(size: 17, weight: .regular))
+                    .tint(.turquoise)
+            }
+            .buttonStyle(.plain)
+            
+            Button(role: .destructive) {
+                deletePurchased()
+            } label: {
+                Text("Удалить")
+                    .font(.system(size: 17, weight: .medium))
+                    .tint(.swipeActionIRed)
+                
+            }
+        }, message: {
+            Text("Вы действительно хотите удалить все купленные товары?")
+                .font(.system(size: 13, weight: .regular))
+        })
+        .alert("Удаление товара", isPresented: $showDeleteAlert, actions: {
+            Button(role: .cancel) {
+                deleteShoppingItem = nil
+            } label: {
+                Text("Отмена")
+                    .font(.system(size: 17, weight: .regular))
+                    .tint(.turquoise)
+            }
+            .buttonStyle(.plain)
+            
+            Button(role: .destructive) {
+                guard let item = deleteShoppingItem else {
+                    return
+                }
+                
+                deleteItem(item)
+                deleteShoppingItem = nil
+            } label: {
+                Text("Удалить")
+                    .font(.system(size: 17, weight: .medium))
+                    .tint(.swipeActionIRed)
+                
+            }
+        }, message: {
+            Text("Вы действительно хотите удалить товар?")
+                .font(.system(size: 13, weight: .regular))
+        })
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
@@ -129,7 +181,10 @@ struct ShoppingItemList: View {
                     }
                     
                     Button(role: .destructive) {
-                        deletePurchased()
+                        let purchasedCount = shoppingItems.lazy.filter({ $0.isPurchased }).count
+                        if purchasedCount > 0 {
+                            showDeletePurchasedAlert = true
+                        }
                     } label: {
                         Label(ShoppingItemListText.menuDeletePurchased, systemImage: "trash")
                     }
@@ -183,7 +238,8 @@ struct ShoppingItemList: View {
     
     private func deleteButton(for item: ShoppingItem) -> some View {
         Button(role: .destructive) {
-            deleteItem(item)
+            deleteShoppingItem = item
+            showDeleteAlert = true
         } label: {
             Image(systemName: "trash")
                 .font(.system(size: 20))
