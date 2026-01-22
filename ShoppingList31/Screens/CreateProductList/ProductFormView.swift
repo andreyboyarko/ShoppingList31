@@ -14,9 +14,24 @@ struct ProductFormView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
+    @Query private var productsInList: [ShoppingItem]
+    
     init (config: FormConfig) {
         self.config = config
         self._observed = State(initialValue: ProductFormObserved(config: config))
+        
+        if let list = config.list {
+                let listId = list.persistentModelID
+            self._productsInList = Query(filter: #Predicate<ShoppingItem> { item in
+                if let itemList = item.list {
+                    return itemList.persistentModelID == listId
+                } else {
+                    return false
+                }
+            })
+            } else {
+                self._productsInList = Query()
+            }
     }
     
     var body: some View {
@@ -114,9 +129,30 @@ struct ProductFormView: View {
     }
     
     private var productNameField: some View {
-        observed.isCreating ?
-        NameTextField(placeholder: "Название товара", text: $observed.productName) :
-        NameTextField(placeholder: "", text: $observed.productName)
+        VStack(alignment: .leading, spacing: 6) {
+            NameTextField(
+                placeholder: observed.isCreating ? "Название товара" : "",
+                text: $observed.productName
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(observed.isDuplicateName ? Color.red : Color.clear, lineWidth: 1)
+            )
+            .onChange(of: observed.productName) { _, newValue in
+                observed.checkDuplicateName(
+                    newValue,
+                    in: productsInList,
+                    editingId: config.product?.id
+                )
+            }
+
+            if observed.isDuplicateName {
+                Text("Этот товар уже есть в списке, добавьте другой")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .padding(.leading, 8)
+            }
+        }
     }
     
     private var suggestionMenu: some View {
@@ -147,6 +183,7 @@ struct ProductFormView: View {
         }
     }
     
+
     private var quantityField: some View {
         observed.isCreating ?
         NameTextField(placeholder: "Количество", text: $observed.productCount).keyboardType(.phonePad) :
@@ -189,6 +226,7 @@ extension ProductFormView {
         var selectedUnit: String = ""
         var unitPickerSelection: UnitsProduct = .pieces
         var isMenuShowing: Bool = false
+        var isDuplicateName: Bool = false
         
         private let suggestionService: ProductSuggestionProtocol
         var suggestedProductsArray: [String] = []
@@ -203,9 +241,11 @@ extension ProductFormView {
         private let isEditing: Bool
         
         var isFormValid: Bool {
-            guard !productName.isEmpty,
+            let trimmedName = productName.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedName.isEmpty,
                   !productCount.isEmpty,
                   !selectedUnit.isEmpty,
+                  !isDuplicateName,
                   let count = Int(productCount), count > 0 else {
                 return false
             }
@@ -231,6 +271,28 @@ extension ProductFormView {
                 self.productCount = String(product.count)
                 self.selectedUnit = product.unit
                 self.unitPickerSelection = UnitsProduct(rawValue: product.unit) ?? UnitsProduct.pieces
+            }
+        }
+        
+        func checkDuplicateName(
+            _ newValue: String,
+            in products: [ShoppingItem],
+            editingId: PersistentIdentifier?
+        ) {
+            let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard !trimmed.isEmpty else {
+                isDuplicateName = false
+                return
+            }
+
+            isDuplicateName = products.contains { item in
+                // при редактировании не считаем сам объект
+                if let editingId, item.id == editingId { return false }
+
+                return item.name
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .localizedCaseInsensitiveCompare(trimmed) == .orderedSame
             }
         }
         
