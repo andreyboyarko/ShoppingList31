@@ -106,53 +106,27 @@ struct ShoppingItemList: View {
             }
         }
         .alert("Удаление купленных товаров", isPresented: $showDeletePurchasedAlert, actions: {
-            Button(role: .cancel) {
-                
-            } label: {
-                Text("Отмена")
-                    .font(.system(size: 17, weight: .regular))
-                    .tint(.turquoise)
-            }
-            .buttonStyle(.plain)
-            
-            Button(role: .destructive) {
-                deletePurchased()
-            } label: {
-                Text("Удалить")
-                    .font(.system(size: 17, weight: .medium))
-                    .tint(.swipeActionIRed)
-                
-            }
-        }, message: {
-            Text("Вы действительно хотите удалить все купленные товары?")
-                .font(.system(size: 13, weight: .regular))
-        })
+                Button("Отмена", role: .cancel) {}
+                Button("Удалить", role: .destructive) {
+                    deletePurchased()
+                }
+            }, message: {
+                Text("Вы действительно хотите удалить все купленные товары?")
+            })
         .alert("Удаление товара", isPresented: $showDeleteAlert, actions: {
-            Button(role: .cancel) {
+            Button("Отмена", role: .cancel) {
                 deleteShoppingItem = nil
-            } label: {
-                Text("Отмена")
-                    .font(.system(size: 17, weight: .regular))
-                    .tint(.turquoise)
             }
-            .buttonStyle(.plain)
-            
-            Button(role: .destructive) {
+            Button("Удалить", role: .destructive) {
                 guard let item = deleteShoppingItem else {
                     return
                 }
                 
                 deleteItem(item)
                 deleteShoppingItem = nil
-            } label: {
-                Text("Удалить")
-                    .font(.system(size: 17, weight: .medium))
-                    .tint(.swipeActionIRed)
-                
             }
         }, message: {
             Text("Вы действительно хотите удалить товар?")
-                .font(.system(size: 13, weight: .regular))
         })
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -237,7 +211,7 @@ struct ShoppingItemList: View {
     }
     
     private func deleteButton(for item: ShoppingItem) -> some View {
-        Button(role: .destructive) {
+        Button {
             deleteShoppingItem = item
             showDeleteAlert = true
         } label: {
