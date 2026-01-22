@@ -153,18 +153,18 @@ struct ProductFormView: View {
     }
     
     private var unitSelectionField: some View {
-            NameTextField(
-                placeholder: String(localized: "Ед.Изм.:"),
-                text: .constant("")
-            )
-            .disabled(true)
-            .overlay(
-                customPicker
-            )
-            .onTapGesture {
-                observed.showMenu()
-            }
+        NameTextField(
+            placeholder: observed.isCreating ? String(localized: "Ед.Изм.:") : "",
+            text: observed.isCreating ? .constant("") : .constant(observed.unitPickerSelection.localizedName)
+        )
+        .disabled(true)
+        .overlay(
+            customPicker
+        )
+        .onTapGesture {
+            observed.showMenu()
         }
+    }
     
     private var customPicker: some View {
         HStack {
@@ -185,7 +185,7 @@ extension ProductFormView {
         
         var productName: String = ""
         var productCount: String = ""
-        var selectedUnit: String = ""
+        var selectedUnit: String = UnitsProduct.pieces.rawValue
         var unitPickerSelection: UnitsProduct = .pieces
         var isMenuShowing: Bool = false
         
@@ -216,7 +216,7 @@ extension ProductFormView {
         }
         
         var isPikerShowing: Bool {
-            true
+            isCreating
         }
         
         var isCreating: Bool { !isEditing }
