@@ -105,10 +105,6 @@ struct ProductFormView: View {
                 config.product?.count = count
                 config.product?.unit = observed.selectedUnit
             }
-            
-            if observed.isCreating {
-//                observed.cleanField()
-            }
             dismiss()
         }
         .font(.navigationBarButton)
